@@ -665,11 +665,11 @@ for(let i = 0; i <= 10; i++){
     const boxBody = new _cannonEs.Body({
         mass: 1,
         shape: new _cannonEs.Box(new _cannonEs.Vec3(0.5, 0.5, 0.5)),
-        position: new _cannonEs.Vec3(10, 20, 0),
+        position: new _cannonEs.Vec3(-Math.random() * 10, Math.random() * 10, 0),
         material: boxPhysMat
     });
-    boxBody.angularVelocity.set(0, 10, 0);
-    boxBody.angularDamping = 0.3;
+    // boxBody.angularVelocity.set(0,10,0);
+    // boxBody.angularDamping = 0.3;
     world.addBody(boxBody);
     boxBodies.push(boxBody);
     boxesPhyMat.push(boxPhysMat);
@@ -708,6 +708,8 @@ function animate(time) {
         boxesMesh[i].position.copy(boxBodies[i].position);
         boxesMesh[i].quaternion.copy(boxBodies[i].quaternion);
     }
+    // boxMesh.position.copy(boxBody.position);
+    // boxMesh.quaternion.copy(boxBody.quaternion);
     // sphereMesh.position.copy(sphereBody.position);
     // sphereMesh.quaternion.copy(sphereBody.quaternion);
     renderer.render(scene, camera);
