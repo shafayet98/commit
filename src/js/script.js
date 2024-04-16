@@ -12,18 +12,8 @@ const renderer = new THREE.WebGLRenderer();
 renderer.shadowMap.enabled = true;
 // Setting the canvas size
 renderer.setSize(window.innerWidth, window.innerHeight);
-// renderer.setSize(1500, 500);
 // adding the canvas to html
 document.body.appendChild(renderer.domElement);
-
-
-// create physics world
-
-const world = new CANNON.World({
-    gravity: new CANNON.Vec3(0,-9.81,0)
-});
-const timeStep = 1/60
-
 
 // create the scene
 const scene = new THREE.Scene()
@@ -45,62 +35,124 @@ orbit.update();
 const axisHelper = new THREE.AxesHelper(3); // 5 is the length of the axis
 scene.add(axisHelper);
 
-// adding object: plane
-const planeGeometry = new THREE.PlaneGeometry(30,30);
-const planeMaterial = new THREE.MeshBasicMaterial({
-    color: 0xFFFFFF,
-    side: THREE.DoubleSide,
-    wireframe:false
-});
-const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-plane.rotation.x = -0.5 * Math.PI;
-plane.receiveShadow = true;
-// plane.position.y = -10
-scene.add(plane);
-
-// create the body for the plane
-const planeBody = new CANNON.Body({
-    shape: new CANNON.Plane(),
-    // mass: 10
-    type: CANNON.Body.STATIC
-});
-planeBody.quaternion.setFromEuler(-Math.PI/ 2, 0, 0);
-world.addBody(planeBody);
-
-
-// adding job: sphare
-const sphereGeometry = new THREE.SphereGeometry(0.5,50,50);
-const sphereMaterial = new THREE.MeshBasicMaterial({
-    color: 0x00FF00,
-    wireframe: false
-});
-let numbers = 30
-for(let i = 0; i<=numbers;i++){
-    const sphere = new THREE.Mesh(sphereGeometry,sphereMaterial);
-    sphere.position.set(-10 + Math.round(Math.random()*10), Math.round(Math.random()*30),0);
-    sphere.rotation.x += Math.PI * Math.random();
-    sphere.rotation.y += Math.PI * Math.random();
-    scene.add(sphere);
-}
-
-// sphere.position.set(-10,10,0);
-// sphere.castShadow = true;
-
-
-
 // add a grid helper:
 const gridHelper = new THREE.GridHelper(30,10);
 scene.add(gridHelper);
 
+// adding object: ground
+const groundGeo = new THREE.PlaneGeometry(30, 30);
+const groundMat = new THREE.MeshBasicMaterial({ 
+	color: 0xffffff,
+	side: THREE.DoubleSide,
+	wireframe: true 
+ });
+const groundMesh = new THREE.Mesh(groundGeo, groundMat);
+scene.add(groundMesh);
 
+// add a box 
+boxesMesh = [];
+for (let i = 0; i<=10;i++){
+    const boxGeo = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+    const boxMat = new THREE.MeshBasicMaterial({
+        color: 0x00ff00,
+        wireframe: true
+    });
+    const boxMesh = new THREE.Mesh(boxGeo, boxMat);
+    boxesMesh.push(boxMesh);
+    scene.add(boxMesh);
+}
+console.log(boxesMesh);
+
+
+// adding job: sphare
+// const sphereGeo = new THREE.SphereGeometry(1);
+// const sphereMat = new THREE.MeshBasicMaterial({ 
+// 	color: 0xff0000, 
+// 	wireframe: true,
+//  });
+// const sphereMesh = new THREE.Mesh( sphereGeo, sphereMat);
+// scene.add(sphereMesh);
+
+// create physics world
+const world = new CANNON.World({
+    gravity: new CANNON.Vec3(0, -9.81, 0)
+});
+
+// ground body
+const groundPhysMat = new CANNON.Material();
+const groundBody = new CANNON.Body({
+    //shape: new CANNON.Plane(),
+    //mass: 10
+    shape: new CANNON.Box(new CANNON.Vec3(15, 15, 0.1)),
+    type: CANNON.Body.STATIC,
+    material: groundPhysMat
+});
+world.addBody(groundBody);
+groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
+
+// box body
+boxBodies = [];
+boxesPhyMat = [];
+for (let i = 0; i<=10; i++){
+    const boxPhysMat = new CANNON.Material();
+    const boxBody = new CANNON.Body({
+        mass: 1,
+        shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)),
+        position: new CANNON.Vec3(10, 20, 0),
+        material: boxPhysMat
+    });
+    boxBody.angularVelocity.set(0,10,0);
+    boxBody.angularDamping = 0.3;
+    world.addBody(boxBody);
+    boxBodies.push(boxBody);
+    boxesPhyMat.push(boxPhysMat);
+}
+console.log(boxBodies);
+
+
+// contact between box and ground
+for(let i = 0; i<= 10; i++){
+    const groundBoxContactMat = new CANNON.ContactMaterial(groundPhysMat,boxesPhyMat[i],{friction:0})
+    world.addContactMaterial(groundBoxContactMat);
+}
+
+
+// sphere
+// const spherePhysMat = new CANNON.Material();
+// const sphereBody = new CANNON.Body({
+//     mass: 1,
+//     shape: new CANNON.Sphere(1),
+//     position: new CANNON.Vec3(0, 40, 0),
+//     material: spherePhysMat
+// });
+// world.addBody(sphereBody);
+// sphereBody.linearDamping = 0.6;
+// // contact between sphere and ground
+// const groundSphereContactMat = new CANNON.ContactMaterial(
+//     groundPhysMat,
+//     spherePhysMat,
+//     {restitution: 1}
+// );
+// world.addContactMaterial(groundSphereContactMat);
+
+const timeStep = 1 / 60;
 
 function animate(time){
     world.step(timeStep);
 
-    plane.position.copy(planeBody.position);
-    plane.quaternion.copy(planeBody.quaternion);
+    groundMesh.position.copy(groundBody.position);
+    groundMesh.quaternion.copy(groundBody.quaternion);
 
-    renderer.render(scene,camera);
+    for(let i = 0 ; i<=10; i++){
+        boxesMesh[i].position.copy(boxBodies[i].position);
+        boxesMesh[i].quaternion.copy(boxBodies[i].quaternion);
+    }
+    
+
+    // sphereMesh.position.copy(sphereBody.position);
+    // sphereMesh.quaternion.copy(sphereBody.quaternion);
+
+    renderer.render(scene, camera);
 }
 
 renderer.setAnimationLoop(animate);
