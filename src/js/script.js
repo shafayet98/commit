@@ -13,6 +13,8 @@ const renderer = new THREE.WebGLRenderer();
 renderer.shadowMap.enabled = true;
 // Setting the canvas size
 renderer.setSize(window.innerWidth, window.innerHeight);
+// smooth edges
+renderer.setPixelRatio(window.devicePixelRatio);
 // adding the canvas to html
 document.body.appendChild(renderer.domElement);
 
@@ -37,15 +39,15 @@ const axisHelper = new THREE.AxesHelper(3); // 5 is the length of the axis
 scene.add(axisHelper);
 
 // add a grid helper:
-const gridHelper = new THREE.GridHelper(30,10);
-scene.add(gridHelper);
+// const gridHelper = new THREE.GridHelper(30,10);
+// scene.add(gridHelper);
 
 // adding object: ground
-const groundGeo = new THREE.PlaneGeometry(30, 30);
+const groundGeo = new THREE.BoxGeometry(20, 20, 0.5);
 const groundMat = new THREE.MeshBasicMaterial({ 
 	color: 0xffffff,
 	side: THREE.DoubleSide,
-	wireframe: true 
+	wireframe: false 
  });
 const groundMesh = new THREE.Mesh(groundGeo, groundMat);
 scene.add(groundMesh);
@@ -84,7 +86,7 @@ const groundPhysMat = new CANNON.Material();
 const groundBody = new CANNON.Body({
     //shape: new CANNON.Plane(),
     //mass: 10
-    shape: new CANNON.Box(new CANNON.Vec3(15, 15, 0.1)),
+    shape: new CANNON.Box(new CANNON.Vec3(10, 10, 0.5)),
     // shape: new CANNON.Sphere(10),
     type: CANNON.Body.STATIC,
     material: groundPhysMat
@@ -100,7 +102,7 @@ for (let i = 0; i<=numObjects; i++){
     const boxBody = new CANNON.Body({
         mass: 1,
         shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)),
-        position: new CANNON.Vec3(-Math.random() * 15, Math.random() * 10, Math.random() * 10),
+        position: new CANNON.Vec3(createRandomPosition(-8,8), createRandomPosition(1,10), createRandomPosition(-8,8)),
         material: boxPhysMat
     });
     // boxBody.angularVelocity.set(0,10,0);
@@ -161,6 +163,10 @@ function animate(time){
     // sphereMesh.quaternion.copy(sphereBody.quaternion);
 
     renderer.render(scene, camera);
+}
+
+function createRandomPosition(min, max) {
+    return Math.random() * (max - min) + min;
 }
 
 renderer.setAnimationLoop(animate);

@@ -597,6 +597,8 @@ const renderer = new _three.WebGLRenderer();
 renderer.shadowMap.enabled = true;
 // Setting the canvas size
 renderer.setSize(window.innerWidth, window.innerHeight);
+// smooth edges
+renderer.setPixelRatio(window.devicePixelRatio);
 // adding the canvas to html
 document.body.appendChild(renderer.domElement);
 // create the scene
@@ -612,14 +614,14 @@ orbit.update();
 const axisHelper = new _three.AxesHelper(3); // 5 is the length of the axis
 scene.add(axisHelper);
 // add a grid helper:
-const gridHelper = new _three.GridHelper(30, 10);
-scene.add(gridHelper);
+// const gridHelper = new THREE.GridHelper(30,10);
+// scene.add(gridHelper);
 // adding object: ground
-const groundGeo = new _three.PlaneGeometry(30, 30);
+const groundGeo = new _three.BoxGeometry(20, 20, 0.5);
 const groundMat = new _three.MeshBasicMaterial({
     color: 0xffffff,
     side: _three.DoubleSide,
-    wireframe: true
+    wireframe: false
 });
 const groundMesh = new _three.Mesh(groundGeo, groundMat);
 scene.add(groundMesh);
@@ -653,7 +655,7 @@ const groundPhysMat = new _cannonEs.Material();
 const groundBody = new _cannonEs.Body({
     //shape: new CANNON.Plane(),
     //mass: 10
-    shape: new _cannonEs.Box(new _cannonEs.Vec3(15, 15, 0.1)),
+    shape: new _cannonEs.Box(new _cannonEs.Vec3(10, 10, 0.5)),
     // shape: new CANNON.Sphere(10),
     type: _cannonEs.Body.STATIC,
     material: groundPhysMat
@@ -668,7 +670,7 @@ for(let i = 0; i <= numObjects; i++){
     const boxBody = new _cannonEs.Body({
         mass: 1,
         shape: new _cannonEs.Box(new _cannonEs.Vec3(0.5, 0.5, 0.5)),
-        position: new _cannonEs.Vec3(-Math.random() * 15, Math.random() * 10, Math.random() * 10),
+        position: new _cannonEs.Vec3(createRandomPosition(-8, 8), createRandomPosition(1, 10), createRandomPosition(-8, 8)),
         material: boxPhysMat
     });
     // boxBody.angularVelocity.set(0,10,0);
@@ -717,6 +719,9 @@ function animate(time) {
     // sphereMesh.position.copy(sphereBody.position);
     // sphereMesh.quaternion.copy(sphereBody.quaternion);
     renderer.render(scene, camera);
+}
+function createRandomPosition(min, max) {
+    return Math.random() * (max - min) + min;
 }
 renderer.setAnimationLoop(animate);
 
