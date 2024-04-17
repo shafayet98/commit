@@ -596,7 +596,8 @@ numObjects = 30;
 const renderer = new _three.WebGLRenderer();
 renderer.shadowMap.enabled = true;
 // Setting the canvas size
-renderer.setSize(window.innerWidth, window.innerHeight);
+// renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setSize(1500, 500);
 // smooth edges
 renderer.setPixelRatio(window.devicePixelRatio);
 // adding the canvas to html

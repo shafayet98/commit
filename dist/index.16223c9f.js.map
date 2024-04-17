@@ -1,0 +1,1 @@
+{"mappings":"AAEA,eAAe;AAEX,WAAW;AACf;AAEA","sources":["src/js/data.js"],"sourcesContent":["\n\nasync function getData(){\n\n    // do stuff\n}\n\ngetData();\n\n"],"names":[],"version":3,"file":"index.16223c9f.js.map","sourceRoot":"/__parcel_source_root/"}
