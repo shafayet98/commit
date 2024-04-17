@@ -591,6 +591,8 @@ var _addonsJs = require("three/examples/jsm/Addons.js");
 var _datGui = require("dat.gui");
 // import cannon
 var _cannonEs = require("cannon-es");
+// number of objects
+numObjects = 30;
 const renderer = new _three.WebGLRenderer();
 renderer.shadowMap.enabled = true;
 // Setting the canvas size
@@ -623,11 +625,11 @@ const groundMesh = new _three.Mesh(groundGeo, groundMat);
 scene.add(groundMesh);
 // add a box 
 boxesMesh = [];
-for(let i = 0; i <= 10; i++){
+for(let i = 0; i <= numObjects; i++){
     const boxGeo = new _three.BoxGeometry(0.5, 0.5, 0.5);
     const boxMat = new _three.MeshBasicMaterial({
         color: 0x00ff00,
-        wireframe: true
+        wireframe: false
     });
     const boxMesh = new _three.Mesh(boxGeo, boxMat);
     boxesMesh.push(boxMesh);
@@ -644,7 +646,7 @@ console.log(boxesMesh);
 // scene.add(sphereMesh);
 // create physics world
 const world = new _cannonEs.World({
-    gravity: new _cannonEs.Vec3(0, -9.81, 0)
+    gravity: new _cannonEs.Vec3(0, -12.81, 0)
 });
 // ground body
 const groundPhysMat = new _cannonEs.Material();
@@ -652,6 +654,7 @@ const groundBody = new _cannonEs.Body({
     //shape: new CANNON.Plane(),
     //mass: 10
     shape: new _cannonEs.Box(new _cannonEs.Vec3(15, 15, 0.1)),
+    // shape: new CANNON.Sphere(10),
     type: _cannonEs.Body.STATIC,
     material: groundPhysMat
 });
@@ -660,12 +663,12 @@ groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
 // box body
 boxBodies = [];
 boxesPhyMat = [];
-for(let i = 0; i <= 10; i++){
+for(let i = 0; i <= numObjects; i++){
     const boxPhysMat = new _cannonEs.Material();
     const boxBody = new _cannonEs.Body({
         mass: 1,
         shape: new _cannonEs.Box(new _cannonEs.Vec3(0.5, 0.5, 0.5)),
-        position: new _cannonEs.Vec3(-Math.random() * 10, Math.random() * 10, 0),
+        position: new _cannonEs.Vec3(-Math.random() * 15, Math.random() * 10, Math.random() * 10),
         material: boxPhysMat
     });
     // boxBody.angularVelocity.set(0,10,0);
@@ -676,9 +679,10 @@ for(let i = 0; i <= 10; i++){
 }
 console.log(boxBodies);
 // contact between box and ground
-for(let i = 0; i <= 10; i++){
+for(let i = 0; i <= numObjects; i++){
     const groundBoxContactMat = new _cannonEs.ContactMaterial(groundPhysMat, boxesPhyMat[i], {
-        friction: 0
+        friction: 0.2,
+        restitution: 1
     });
     world.addContactMaterial(groundBoxContactMat);
 }
@@ -704,7 +708,7 @@ function animate(time) {
     world.step(timeStep);
     groundMesh.position.copy(groundBody.position);
     groundMesh.quaternion.copy(groundBody.quaternion);
-    for(let i = 0; i <= 10; i++){
+    for(let i = 0; i <= numObjects; i++){
         boxesMesh[i].position.copy(boxBodies[i].position);
         boxesMesh[i].quaternion.copy(boxBodies[i].quaternion);
     }

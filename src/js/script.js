@@ -6,7 +6,8 @@ import * as dat from 'dat.gui';
 // import cannon
 import * as CANNON from 'cannon-es';
 
-
+// number of objects
+numObjects = 30;
 
 const renderer = new THREE.WebGLRenderer();
 renderer.shadowMap.enabled = true;
@@ -51,11 +52,11 @@ scene.add(groundMesh);
 
 // add a box 
 boxesMesh = [];
-for (let i = 0; i<=10;i++){
+for (let i = 0; i<=numObjects;i++){
     const boxGeo = new THREE.BoxGeometry(0.5, 0.5, 0.5);
     const boxMat = new THREE.MeshBasicMaterial({
         color: 0x00ff00,
-        wireframe: true
+        wireframe: false
     });
     const boxMesh = new THREE.Mesh(boxGeo, boxMat);
     boxesMesh.push(boxMesh);
@@ -75,7 +76,7 @@ console.log(boxesMesh);
 
 // create physics world
 const world = new CANNON.World({
-    gravity: new CANNON.Vec3(0, -9.81, 0)
+    gravity: new CANNON.Vec3(0, -12.81, 0)
 });
 
 // ground body
@@ -84,6 +85,7 @@ const groundBody = new CANNON.Body({
     //shape: new CANNON.Plane(),
     //mass: 10
     shape: new CANNON.Box(new CANNON.Vec3(15, 15, 0.1)),
+    // shape: new CANNON.Sphere(10),
     type: CANNON.Body.STATIC,
     material: groundPhysMat
 });
@@ -93,12 +95,12 @@ groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
 // box body
 boxBodies = [];
 boxesPhyMat = [];
-for (let i = 0; i<=10; i++){
+for (let i = 0; i<=numObjects; i++){
     const boxPhysMat = new CANNON.Material();
     const boxBody = new CANNON.Body({
         mass: 1,
         shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)),
-        position: new CANNON.Vec3(- Math.random() * 10, Math.random() * 10, 0),
+        position: new CANNON.Vec3(-Math.random() * 15, Math.random() * 10, Math.random() * 10),
         material: boxPhysMat
     });
     // boxBody.angularVelocity.set(0,10,0);
@@ -111,8 +113,11 @@ console.log(boxBodies);
 
 
 // contact between box and ground
-for(let i = 0; i<= 10; i++){
-    const groundBoxContactMat = new CANNON.ContactMaterial(groundPhysMat,boxesPhyMat[i],{friction:0})
+for(let i = 0; i<= numObjects; i++){
+    const groundBoxContactMat = new CANNON.ContactMaterial(groundPhysMat,boxesPhyMat[i],{
+        friction:0.2,
+        restitution: 1
+    })
     world.addContactMaterial(groundBoxContactMat);
 }
 
@@ -143,7 +148,7 @@ function animate(time){
     groundMesh.position.copy(groundBody.position);
     groundMesh.quaternion.copy(groundBody.quaternion);
 
-    for(let i = 0 ; i<=10; i++){
+    for(let i = 0 ; i<=numObjects; i++){
         boxesMesh[i].position.copy(boxBodies[i].position);
         boxesMesh[i].quaternion.copy(boxBodies[i].quaternion);
     }
