@@ -5,18 +5,30 @@ import { OrbitControls } from 'three/examples/jsm/Addons.js';
 import * as dat from 'dat.gui';
 // import cannon
 import * as CANNON from 'cannon-es';
-// import {commit_count} from './data.js';
+// import {result} from './data.js';
+// import commit_count from './data.js';
+var numObjects ;
+function handleData(event) {
+    const data = event.detail;
+    numObjects = data;
+    console.log(numObjects);
+}
 
-console.log(commit_count);
+// Listen for the 'dataFetched' event dispatched from a.js
+document.addEventListener('dataFetched', handleData);
+
+// console.log(commit_count);
+// var a = getdata()
+// a.then((result) => console.log(result))
 
 // number of objects
-numObjects = 30;
+// numObjects = 30;
 
 const renderer = new THREE.WebGLRenderer();
 renderer.shadowMap.enabled = true;
 // Setting the canvas size
 // renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setSize(1500,500);
+renderer.setSize(1500, 500);
 // smooth edges
 renderer.setPixelRatio(window.devicePixelRatio);
 // adding the canvas to html
@@ -28,11 +40,11 @@ const scene = new THREE.Scene()
 // Camera = angel, aspect ratio, near and far
 const camera = new THREE.PerspectiveCamera(
     45,
-    window.innerWidth/window.innerHeight,
+    window.innerWidth / window.innerHeight,
     0.1,
     1000
 );
-camera.position.set(-10,30,30); // x,y,z = 0,2,5
+camera.position.set(-10, 30, 30); // x,y,z = 0,2,5
 
 // orbit control
 const orbit = new OrbitControls(camera, renderer.domElement);
@@ -48,17 +60,17 @@ scene.add(axisHelper);
 
 // adding object: ground
 const groundGeo = new THREE.BoxGeometry(20, 20, 0.5);
-const groundMat = new THREE.MeshBasicMaterial({ 
-	color: 0xffffff,
-	side: THREE.DoubleSide,
-	wireframe: false 
- });
+const groundMat = new THREE.MeshBasicMaterial({
+    color: 0xffffff,
+    side: THREE.DoubleSide,
+    wireframe: false
+});
 const groundMesh = new THREE.Mesh(groundGeo, groundMat);
 scene.add(groundMesh);
 
 // add a box 
 boxesMesh = [];
-for (let i = 0; i<=numObjects;i++){
+for (let i = 0; i <= numObjects; i++) {
     const boxGeo = new THREE.BoxGeometry(0.5, 0.5, 0.5);
     const boxMat = new THREE.MeshBasicMaterial({
         color: 0x00ff00,
@@ -101,12 +113,12 @@ groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
 // box body
 boxBodies = [];
 boxesPhyMat = [];
-for (let i = 0; i<=numObjects; i++){
+for (let i = 0; i <= numObjects; i++) {
     const boxPhysMat = new CANNON.Material();
     const boxBody = new CANNON.Body({
         mass: 1,
         shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)),
-        position: new CANNON.Vec3(createRandomPosition(-8,8), createRandomPosition(1,10), createRandomPosition(-8,8)),
+        position: new CANNON.Vec3(createRandomPosition(-8, 8), createRandomPosition(1, 10), createRandomPosition(-8, 8)),
         material: boxPhysMat
     });
     // boxBody.angularVelocity.set(0,10,0);
@@ -119,9 +131,9 @@ console.log(boxBodies);
 
 
 // contact between box and ground
-for(let i = 0; i<= numObjects; i++){
-    const groundBoxContactMat = new CANNON.ContactMaterial(groundPhysMat,boxesPhyMat[i],{
-        friction:0.2,
+for (let i = 0; i <= numObjects; i++) {
+    const groundBoxContactMat = new CANNON.ContactMaterial(groundPhysMat, boxesPhyMat[i], {
+        friction: 0.2,
         restitution: 1
     })
     world.addContactMaterial(groundBoxContactMat);
@@ -150,13 +162,13 @@ for(let i = 0; i<= numObjects; i++){
 // https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=1
 const timeStep = 1 / 60;
 
-function animate(time){
+function animate(time) {
     world.step(timeStep);
 
     groundMesh.position.copy(groundBody.position);
     groundMesh.quaternion.copy(groundBody.quaternion);
 
-    for(let i = 0 ; i<=numObjects; i++){
+    for (let i = 0; i <= numObjects; i++) {
         boxesMesh[i].position.copy(boxBodies[i].position);
         boxesMesh[i].quaternion.copy(boxBodies[i].quaternion);
     }
@@ -164,7 +176,7 @@ function animate(time){
     // boxMesh.position.copy(boxBody.position);
     // boxMesh.quaternion.copy(boxBody.quaternion);
 
-    
+
     // sphereMesh.position.copy(sphereBody.position);
     // sphereMesh.quaternion.copy(sphereBody.quaternion);
 

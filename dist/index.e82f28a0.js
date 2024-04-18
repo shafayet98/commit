@@ -591,10 +591,21 @@ var _addonsJs = require("three/examples/jsm/Addons.js");
 var _datGui = require("dat.gui");
 // import cannon
 var _cannonEs = require("cannon-es");
-// import {commit_count} from './data.js';
-console.log(commit_count);
+// import {result} from './data.js';
+// import commit_count from './data.js';
+var numObjects;
+function handleData(event) {
+    const data = event.detail;
+    numObjects = data;
+    console.log(numObjects);
+}
+// Listen for the 'dataFetched' event dispatched from a.js
+document.addEventListener("dataFetched", handleData);
+// console.log(commit_count);
+// var a = getdata()
+// a.then((result) => console.log(result))
 // number of objects
-numObjects = 30;
+// numObjects = 30;
 const renderer = new _three.WebGLRenderer();
 renderer.shadowMap.enabled = true;
 // Setting the canvas size
