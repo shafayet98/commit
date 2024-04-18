@@ -5,6 +5,9 @@ import { OrbitControls } from 'three/examples/jsm/Addons.js';
 import * as dat from 'dat.gui';
 // import cannon
 import * as CANNON from 'cannon-es';
+// import {commit_count} from './data.js';
+
+console.log(commit_count);
 
 // number of objects
 numObjects = 30;
@@ -143,6 +146,8 @@ for(let i = 0; i<= numObjects; i++){
 // );
 // world.addContactMaterial(groundSphereContactMat);
 
+
+// https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=1
 const timeStep = 1 / 60;
 
 function animate(time){

@@ -591,6 +591,8 @@ var _addonsJs = require("three/examples/jsm/Addons.js");
 var _datGui = require("dat.gui");
 // import cannon
 var _cannonEs = require("cannon-es");
+// import {commit_count} from './data.js';
+console.log(commit_count);
 // number of objects
 numObjects = 30;
 const renderer = new _three.WebGLRenderer();
@@ -706,6 +708,7 @@ for(let i = 0; i <= numObjects; i++){
 //     {restitution: 1}
 // );
 // world.addContactMaterial(groundSphereContactMat);
+// https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=1
 const timeStep = 1 / 60;
 function animate(time) {
     world.step(timeStep);
