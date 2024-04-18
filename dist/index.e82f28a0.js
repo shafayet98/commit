@@ -593,25 +593,11 @@ var _datGui = require("dat.gui");
 var _cannonEs = require("cannon-es");
 // import {result} from './data.js';
 // import commit_count from './data.js';
-// setTimeout();
-var numObjects = 30;
-// function handleData(event) {
-//     const data = event.detail;
-//     numObjects = data;
-//     console.log(numObjects);
-// }
-// Listen for the 'dataFetched' event dispatched from a.js
-// document.addEventListener('dataFetched', handleData);
-// console.log(commit_count);
-// var a = getdata()
-// a.then((result) => console.log(result))
-// number of objects
-// numObjects = 30;
 const renderer = new _three.WebGLRenderer();
 renderer.shadowMap.enabled = true;
 // Setting the canvas size
-// renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setSize(1500, 500);
+renderer.setSize(window.innerWidth, window.innerHeight);
+// renderer.setSize(1500, 500);
 // smooth edges
 renderer.setPixelRatio(window.devicePixelRatio);
 // adding the canvas to html
@@ -625,34 +611,97 @@ camera.position.set(-10, 30, 30); // x,y,z = 0,2,5
 // orbit control
 const orbit = new (0, _addonsJs.OrbitControls)(camera, renderer.domElement);
 orbit.update();
-// add the axis helper
-const axisHelper = new _three.AxesHelper(3); // 5 is the length of the axis
-scene.add(axisHelper);
-// add a grid helper:
-// const gridHelper = new THREE.GridHelper(30,10);
-// scene.add(gridHelper);
-// adding object: ground
-const groundGeo = new _three.BoxGeometry(20, 20, 0.5);
-const groundMat = new _three.MeshBasicMaterial({
-    color: 0xffffff,
-    side: _three.DoubleSide,
-    wireframe: false
+// create physics world
+const world = new _cannonEs.World({
+    gravity: new _cannonEs.Vec3(0, -12.81, 0)
 });
-const groundMesh = new _three.Mesh(groundGeo, groundMat);
-scene.add(groundMesh);
-// add a box 
-boxesMesh = [];
-for(let i = 0; i <= numObjects; i++){
-    const boxGeo = new _three.BoxGeometry(0.5, 0.5, 0.5);
-    const boxMat = new _three.MeshBasicMaterial({
-        color: 0x00ff00,
+function createAxisHelper() {
+    // add the axis helper
+    const axisHelper = new _three.AxesHelper(3); // 5 is the length of the axis
+    scene.add(axisHelper);
+}
+function createGridHelper() {
+    // add a grid helper:
+    const gridHelper = new _three.GridHelper(30, 10);
+    scene.add(gridHelper);
+}
+function createGroundMesh() {
+    // adding object: ground
+    const groundGeo = new _three.BoxGeometry(20, 20, 0.5);
+    const groundMat = new _three.MeshBasicMaterial({
+        color: 0xffffff,
+        side: _three.DoubleSide,
         wireframe: false
     });
-    const boxMesh = new _three.Mesh(boxGeo, boxMat);
-    boxesMesh.push(boxMesh);
-    scene.add(boxMesh);
+    const groundMesh = new _three.Mesh(groundGeo, groundMat);
+    scene.add(groundMesh);
+    return groundMesh;
 }
-console.log(boxesMesh);
+function createGroundBody(gmesh) {
+    // ground body
+    const groundPhysMat = new _cannonEs.Material();
+    const groundBody = new _cannonEs.Body({
+        //shape: new CANNON.Plane(),
+        //mass: 10
+        shape: new _cannonEs.Box(new _cannonEs.Vec3(10, 10, 0.5)),
+        // shape: new CANNON.Sphere(10),
+        type: _cannonEs.Body.STATIC,
+        material: groundPhysMat
+    });
+    world.addBody(groundBody);
+    groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
+    return [
+        groundBody,
+        groundPhysMat
+    ];
+}
+function createBoxMesh(numObjects) {
+    // add a box 
+    boxesMesh = [];
+    for(let i = 0; i <= numObjects; i++){
+        const boxGeo = new _three.BoxGeometry(0.5, 0.5, 0.5);
+        const boxMat = new _three.MeshBasicMaterial({
+            color: 0x00ff00,
+            wireframe: false
+        });
+        const boxMesh = new _three.Mesh(boxGeo, boxMat);
+        boxesMesh.push(boxMesh);
+        scene.add(boxMesh);
+    }
+    console.log(boxesMesh);
+    return boxesMesh;
+}
+function createBoxBody(numObjects) {
+    // box body
+    boxBodies = [];
+    boxesPhyMat = [];
+    for(let i = 0; i <= numObjects; i++){
+        const boxPhysMat = new _cannonEs.Material();
+        const boxBody = new _cannonEs.Body({
+            mass: 1,
+            shape: new _cannonEs.Box(new _cannonEs.Vec3(0.5, 0.5, 0.5)),
+            position: new _cannonEs.Vec3(createRandomPosition(-8, 8), createRandomPosition(1, 10), createRandomPosition(-8, 8)),
+            material: boxPhysMat
+        });
+        // boxBody.angularVelocity.set(0,10,0);
+        // boxBody.angularDamping = 0.3;
+        world.addBody(boxBody);
+        boxBodies.push(boxBody);
+        boxesPhyMat.push(boxPhysMat);
+    }
+    console.log(boxBodies);
+    return boxBodies, boxesPhyMat;
+}
+function createContact(numObjects, groundPhysMat) {
+    // // contact between box and ground
+    for(let i = 0; i <= numObjects; i++){
+        const groundBoxContactMat = new _cannonEs.ContactMaterial(groundPhysMat, boxesPhyMat[i], {
+            friction: 0.2,
+            restitution: 1
+        });
+        world.addContactMaterial(groundBoxContactMat);
+    }
+}
 // adding job: sphare
 // const sphereGeo = new THREE.SphereGeometry(1);
 // const sphereMat = new THREE.MeshBasicMaterial({ 
@@ -661,48 +710,6 @@ console.log(boxesMesh);
 //  });
 // const sphereMesh = new THREE.Mesh( sphereGeo, sphereMat);
 // scene.add(sphereMesh);
-// create physics world
-const world = new _cannonEs.World({
-    gravity: new _cannonEs.Vec3(0, -12.81, 0)
-});
-// ground body
-const groundPhysMat = new _cannonEs.Material();
-const groundBody = new _cannonEs.Body({
-    //shape: new CANNON.Plane(),
-    //mass: 10
-    shape: new _cannonEs.Box(new _cannonEs.Vec3(10, 10, 0.5)),
-    // shape: new CANNON.Sphere(10),
-    type: _cannonEs.Body.STATIC,
-    material: groundPhysMat
-});
-world.addBody(groundBody);
-groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
-// box body
-boxBodies = [];
-boxesPhyMat = [];
-for(let i = 0; i <= numObjects; i++){
-    const boxPhysMat = new _cannonEs.Material();
-    const boxBody = new _cannonEs.Body({
-        mass: 1,
-        shape: new _cannonEs.Box(new _cannonEs.Vec3(0.5, 0.5, 0.5)),
-        position: new _cannonEs.Vec3(createRandomPosition(-8, 8), createRandomPosition(1, 10), createRandomPosition(-8, 8)),
-        material: boxPhysMat
-    });
-    // boxBody.angularVelocity.set(0,10,0);
-    // boxBody.angularDamping = 0.3;
-    world.addBody(boxBody);
-    boxBodies.push(boxBody);
-    boxesPhyMat.push(boxPhysMat);
-}
-console.log(boxBodies);
-// contact between box and ground
-for(let i = 0; i <= numObjects; i++){
-    const groundBoxContactMat = new _cannonEs.ContactMaterial(groundPhysMat, boxesPhyMat[i], {
-        friction: 0.2,
-        restitution: 1
-    });
-    world.addContactMaterial(groundBoxContactMat);
-}
 // sphere
 // const spherePhysMat = new CANNON.Material();
 // const sphereBody = new CANNON.Body({
@@ -720,17 +727,15 @@ for(let i = 0; i <= numObjects; i++){
 //     {restitution: 1}
 // );
 // world.addContactMaterial(groundSphereContactMat);
-// https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=1
 const timeStep = 1 / 60;
-function animate(time) {
+function animate(gmesh, gbody, numObjects) {
     world.step(timeStep);
-    groundMesh.position.copy(groundBody.position);
-    groundMesh.quaternion.copy(groundBody.quaternion);
+    gmesh.position.copy(gbody.position);
+    gmesh.quaternion.copy(gbody.quaternion);
     for(let i = 0; i <= numObjects; i++){
         boxesMesh[i].position.copy(boxBodies[i].position);
         boxesMesh[i].quaternion.copy(boxBodies[i].quaternion);
     }
-    // console.log()
     // boxMesh.position.copy(boxBody.position);
     // boxMesh.quaternion.copy(boxBody.quaternion);
     // sphereMesh.position.copy(sphereBody.position);
@@ -740,16 +745,19 @@ function animate(time) {
 function createRandomPosition(min, max) {
     return Math.random() * (max - min) + min;
 }
-renderer.setAnimationLoop(animate); // setTimeout(function () {
- //     //your code to be executed after 1 second
- //     // renderer.setAnimationLoop(() => animate(numObjects));
- //     // // renderer.setAnimationLoop(animate); 
- //     // let objs = localStorage.getItem("objects");
- //     // numObjects = objs;
- //     // console.log(objs);
- //     creatingBoxObject()
- //     renderer.setAnimationLoop(() => animate(numObjects));
- // }, 1000);
+setTimeout(function() {
+    //your code to be executed after 1 second
+    let numObjects = localStorage.getItem("objects");
+    console.log(numObjects);
+    createAxisHelper();
+    createGridHelper();
+    const gmesh = createGroundMesh();
+    const [gbody, gPhyMat] = createGroundBody(gmesh);
+    const bmesh = createBoxMesh(numObjects);
+    const [bbody, bPhyMat] = createBoxBody(numObjects);
+    createContact(numObjects, gPhyMat, bPhyMat);
+    renderer.setAnimationLoop(()=>animate(gmesh, gbody, numObjects));
+}, 1000);
 
 },{"three":"ktPTu","three/examples/jsm/Addons.js":"iBAni","dat.gui":"k3xQk","cannon-es":"HCu3b"}],"ktPTu":[function(require,module,exports) {
 /**
