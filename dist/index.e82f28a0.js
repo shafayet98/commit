@@ -593,14 +593,15 @@ var _datGui = require("dat.gui");
 var _cannonEs = require("cannon-es");
 // import {result} from './data.js';
 // import commit_count from './data.js';
+// setTimeout();
 var numObjects;
-function handleData(event) {
-    const data = event.detail;
-    numObjects = data;
-    console.log(numObjects);
-}
+// function handleData(event) {
+//     const data = event.detail;
+//     numObjects = data;
+//     console.log(numObjects);
+// }
 // Listen for the 'dataFetched' event dispatched from a.js
-document.addEventListener("dataFetched", handleData);
+// document.addEventListener('dataFetched', handleData);
 // console.log(commit_count);
 // var a = getdata()
 // a.then((result) => console.log(result))
@@ -721,7 +722,7 @@ for(let i = 0; i <= numObjects; i++){
 // world.addContactMaterial(groundSphereContactMat);
 // https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=1
 const timeStep = 1 / 60;
-function animate(time) {
+function animate(numObjects) {
     world.step(timeStep);
     groundMesh.position.copy(groundBody.position);
     groundMesh.quaternion.copy(groundBody.quaternion);
@@ -729,6 +730,7 @@ function animate(time) {
         boxesMesh[i].position.copy(boxBodies[i].position);
         boxesMesh[i].quaternion.copy(boxBodies[i].quaternion);
     }
+    // console.log()
     // boxMesh.position.copy(boxBody.position);
     // boxMesh.quaternion.copy(boxBody.quaternion);
     // sphereMesh.position.copy(sphereBody.position);
@@ -738,7 +740,16 @@ function animate(time) {
 function createRandomPosition(min, max) {
     return Math.random() * (max - min) + min;
 }
-renderer.setAnimationLoop(animate);
+// renderer.setAnimationLoop(animate);
+setTimeout(function() {
+    //your code to be executed after 1 second
+    // renderer.setAnimationLoop(() => animate(numObjects));
+    // renderer.setAnimationLoop(animate); 
+    let objs = localStorage.getItem("objects");
+    numObjects = objs;
+    console.log(objs);
+    renderer.setAnimationLoop(()=>animate(numObjects));
+}, 1000);
 
 },{"three":"ktPTu","three/examples/jsm/Addons.js":"iBAni","dat.gui":"k3xQk","cannon-es":"HCu3b"}],"ktPTu":[function(require,module,exports) {
 /**

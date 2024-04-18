@@ -36,8 +36,8 @@ function getData() {
         let take_page_number_info = take_query_string.pop().split(">")[0];
         let last_page = take_page_number_info.split('&').pop();
         let commit_count = parseInt(last_page.split("=").pop());
-        sendDataToB(commit_count);
-        window.resp = commit_count;
+        localStorage.setItem("objects", commit_count);
+        // sendDataToB(commit_count);
     })
     .catch(function (error) {
         console.log(error);
