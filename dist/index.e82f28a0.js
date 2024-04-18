@@ -594,7 +594,7 @@ var _cannonEs = require("cannon-es");
 // import {result} from './data.js';
 // import commit_count from './data.js';
 // setTimeout();
-var numObjects;
+var numObjects = 30;
 // function handleData(event) {
 //     const data = event.detail;
 //     numObjects = data;
@@ -722,7 +722,7 @@ for(let i = 0; i <= numObjects; i++){
 // world.addContactMaterial(groundSphereContactMat);
 // https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=1
 const timeStep = 1 / 60;
-function animate(numObjects) {
+function animate(time) {
     world.step(timeStep);
     groundMesh.position.copy(groundBody.position);
     groundMesh.quaternion.copy(groundBody.quaternion);
@@ -740,16 +740,16 @@ function animate(numObjects) {
 function createRandomPosition(min, max) {
     return Math.random() * (max - min) + min;
 }
-// renderer.setAnimationLoop(animate);
-setTimeout(function() {
-    //your code to be executed after 1 second
-    // renderer.setAnimationLoop(() => animate(numObjects));
-    // renderer.setAnimationLoop(animate); 
-    let objs = localStorage.getItem("objects");
-    numObjects = objs;
-    console.log(objs);
-    renderer.setAnimationLoop(()=>animate(numObjects));
-}, 1000);
+renderer.setAnimationLoop(animate); // setTimeout(function () {
+ //     //your code to be executed after 1 second
+ //     // renderer.setAnimationLoop(() => animate(numObjects));
+ //     // // renderer.setAnimationLoop(animate); 
+ //     // let objs = localStorage.getItem("objects");
+ //     // numObjects = objs;
+ //     // console.log(objs);
+ //     creatingBoxObject()
+ //     renderer.setAnimationLoop(() => animate(numObjects));
+ // }, 1000);
 
 },{"three":"ktPTu","three/examples/jsm/Addons.js":"iBAni","dat.gui":"k3xQk","cannon-es":"HCu3b"}],"ktPTu":[function(require,module,exports) {
 /**

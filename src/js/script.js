@@ -12,7 +12,7 @@ import * as CANNON from 'cannon-es';
 
 
 // setTimeout();
-var numObjects ;
+var numObjects = 30;
 // function handleData(event) {
 //     const data = event.detail;
 //     numObjects = data;
@@ -167,7 +167,7 @@ for (let i = 0; i <= numObjects; i++) {
 // https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=1
 const timeStep = 1 / 60;
 
-function animate(numObjects) {
+function animate(time) {
     world.step(timeStep);
 
     groundMesh.position.copy(groundBody.position);
@@ -192,16 +192,18 @@ function createRandomPosition(min, max) {
     return Math.random() * (max - min) + min;
 }
 
-// renderer.setAnimationLoop(animate);
+renderer.setAnimationLoop(animate);
 
 
-setTimeout(function () {
-    //your code to be executed after 1 second
-    // renderer.setAnimationLoop(() => animate(numObjects));
-    // renderer.setAnimationLoop(animate); 
-    let objs = localStorage.getItem("objects");
-    numObjects = objs;
-    console.log(objs);
-    renderer.setAnimationLoop(() => animate(numObjects));
-}, 1000);
+// setTimeout(function () {
+//     //your code to be executed after 1 second
+//     // renderer.setAnimationLoop(() => animate(numObjects));
+//     // // renderer.setAnimationLoop(animate); 
+//     // let objs = localStorage.getItem("objects");
+//     // numObjects = objs;
+//     // console.log(objs);
+//     creatingBoxObject()
+//     renderer.setAnimationLoop(() => animate(numObjects));
+    
+// }, 1000);
 
