@@ -6,7 +6,6 @@ import * as dat from 'dat.gui';
 // import cannon
 import * as CANNON from 'cannon-es';
 import { buffer, func } from 'three/examples/jsm/nodes/Nodes.js';
-import MouseMeshInteraction from './three_mmi';
 
 
 function generateCommitColor(){
@@ -72,8 +71,7 @@ scene.add(dLightHelper);
 const dLightShadowHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
 scene.add(dLightShadowHelper);
 
-// MMI
-const mmi = new MouseMeshInteraction(scene, camera);
+
 
 function createAxisHelper() {
     // add the axis helper
@@ -216,6 +214,43 @@ function createContact(numObjects, groundPhysMat) {
 
 const timeStep = 1 / 60;
 
+
+// RayCasting
+const rayCaster = new THREE.Raycaster();
+document.addEventListener('mousedown', onMouseDown);
+
+function onMouseDown(event) {
+    const coords = new THREE.Vector2(
+      (event.clientX / renderer.domElement.clientWidth) * 2 - 1,
+      -((event.clientY / renderer.domElement.clientHeight) * 2 - 1),
+    );
+  
+    rayCaster.setFromCamera(coords, camera);
+  
+    const intersections = rayCaster.intersectObjects(scene.children, true);
+    if (intersections.length > 0) {
+      const selectedObject = intersections[0].object;
+      const color = new THREE.Color(Math.random(), Math.random(), Math.random());
+      selectedObject.position.y = 3;
+      console.log(selectedObject.id);
+      getCommitMsg(selectedObject.id)
+
+    //   selectedObject.material.color = color;
+    //   console.log(`${selectedObject.name} was clicked!`);
+    }
+  }
+//   https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=
+
+function getCommitMsg(id) {
+    url = "https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page="+ id;
+    axios.get(url)
+      .then(function (response) {
+        console.log(response.data[0].commit);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
 function animate(gmesh, gbody, numObjects) {
     world.step(timeStep);
 

@@ -7,7 +7,8 @@ import axios from "axios";
 //  <https://api.github.com/repositories/297244943/commits?per_page=1&page=114>; rel="last"
 // https://api.github.com/repos/mrdoob/glTF-Sample-Assets/commits?per_page=1&page=1
 
-url_get = 'https://api.github.com/repos/mrdoob/glTF-Sample-Assets/commits?per_page=1&page=1'
+// url_get = 'https://api.github.com/repos/mrdoob/glTF-Sample-Assets/commits?per_page=1&page=1'
+url_get = "https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=1"
 // url = "https://random-data-api.com/api/v2/users"
 // var commit_count;
 
@@ -67,8 +68,6 @@ function getData() {
 //     });
 //   }
 // }
-
-
 
 // Call the function to fetch data from the API when a.js is loaded
 getData();

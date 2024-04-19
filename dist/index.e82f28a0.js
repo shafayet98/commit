@@ -584,7 +584,6 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"dV6cC":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _three = require("three");
 // to control the camera with mouse we have to import orbit control module
 var _addonsJs = require("three/examples/jsm/Addons.js");
@@ -593,8 +592,6 @@ var _datGui = require("dat.gui");
 // import cannon
 var _cannonEs = require("cannon-es");
 var _nodesJs = require("three/examples/jsm/nodes/Nodes.js");
-var _threeMmi = require("./three_mmi");
-var _threeMmiDefault = parcelHelpers.interopDefault(_threeMmi);
 function generateCommitColor() {
     // color HEX
     // #0B6A33 
@@ -648,8 +645,6 @@ const dLightHelper = new _three.DirectionalLightHelper(directionalLight);
 scene.add(dLightHelper);
 const dLightShadowHelper = new _three.CameraHelper(directionalLight.shadow.camera);
 scene.add(dLightShadowHelper);
-// MMI
-const mmi = new (0, _threeMmiDefault.default)(scene, camera);
 function createAxisHelper() {
     // add the axis helper
     const axisHelper = new _three.AxesHelper(3); // 5 is the length of the axis
@@ -774,6 +769,32 @@ function createContact(numObjects, groundPhysMat) {
 // );
 // world.addContactMaterial(groundSphereContactMat);
 const timeStep = 1 / 60;
+// RayCasting
+const rayCaster = new _three.Raycaster();
+document.addEventListener("mousedown", onMouseDown);
+function onMouseDown(event) {
+    const coords = new _three.Vector2(event.clientX / renderer.domElement.clientWidth * 2 - 1, -(event.clientY / renderer.domElement.clientHeight * 2 - 1));
+    rayCaster.setFromCamera(coords, camera);
+    const intersections = rayCaster.intersectObjects(scene.children, true);
+    if (intersections.length > 0) {
+        const selectedObject = intersections[0].object;
+        const color = new _three.Color(Math.random(), Math.random(), Math.random());
+        selectedObject.position.y = 3;
+        console.log(selectedObject.id);
+        getCommitMsg(selectedObject.id);
+    //   selectedObject.material.color = color;
+    //   console.log(`${selectedObject.name} was clicked!`);
+    }
+}
+//   https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=
+function getCommitMsg(id) {
+    url = "https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=" + id;
+    axios.get(url).then(function(response) {
+        console.log(response.data[0].commit);
+    }).catch(function(error) {
+        console.log(error);
+    });
+}
 function animate(gmesh, gbody, numObjects) {
     world.step(timeStep);
     gmesh.position.copy(gbody.position);
@@ -805,7 +826,7 @@ setTimeout(function() {
     renderer.setAnimationLoop(()=>animate(gmesh, gbody, numObjects));
 }, 1000);
 
-},{"three":"ktPTu","three/examples/jsm/Addons.js":"iBAni","dat.gui":"k3xQk","cannon-es":"HCu3b","three/examples/jsm/nodes/Nodes.js":"a6WJh","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./three_mmi":"eGdYR"}],"ktPTu":[function(require,module,exports) {
+},{"three":"ktPTu","three/examples/jsm/Addons.js":"iBAni","dat.gui":"k3xQk","cannon-es":"HCu3b","three/examples/jsm/nodes/Nodes.js":"a6WJh"}],"ktPTu":[function(require,module,exports) {
 /**
  * @license
  * Copyright 2010-2023 Three.js Authors
