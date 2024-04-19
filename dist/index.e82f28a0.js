@@ -584,6 +584,7 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"dV6cC":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _three = require("three");
 // to control the camera with mouse we have to import orbit control module
 var _addonsJs = require("three/examples/jsm/Addons.js");
@@ -592,6 +593,8 @@ var _datGui = require("dat.gui");
 // import cannon
 var _cannonEs = require("cannon-es");
 var _nodesJs = require("three/examples/jsm/nodes/Nodes.js");
+var _threeMmi = require("./three_mmi");
+var _threeMmiDefault = parcelHelpers.interopDefault(_threeMmi);
 function generateCommitColor() {
     // color HEX
     // #0B6A33 
@@ -645,6 +648,8 @@ const dLightHelper = new _three.DirectionalLightHelper(directionalLight);
 scene.add(dLightHelper);
 const dLightShadowHelper = new _three.CameraHelper(directionalLight.shadow.camera);
 scene.add(dLightShadowHelper);
+// MMI
+const mmi = new (0, _threeMmiDefault.default)(scene, camera);
 function createAxisHelper() {
     // add the axis helper
     const axisHelper = new _three.AxesHelper(3); // 5 is the length of the axis
@@ -724,10 +729,10 @@ function createBoxBody(numObjects) {
     console.log(boxBodies);
     return boxBodies, boxesPhyMat;
 }
-const listener = new _three.AudioListener();
-camera.add(listener);
-const audioLoader = new _three.AudioLoader();
-const contactSound = new _three.Audio(listener);
+// const listener = new THREE.AudioListener();
+// camera.add(listener);
+// const audioLoader = new THREE.AudioLoader();
+// const contactSound = new THREE.Audio(listener);
 function createContact(numObjects, groundPhysMat) {
     // // contact between box and ground
     for(let i = 0; i <= numObjects; i++){
@@ -735,12 +740,12 @@ function createContact(numObjects, groundPhysMat) {
             friction: 0.2,
             restitution: 1
         });
-        world.addContactMaterial(groundBoxContactMat);
-        audioLoader.load("../audio/sound.mp3", function() {
-            contactSound.setBuffer((0, _nodesJs.buffer));
-            contactSound.setLoop(false);
-            contactSound.setVolume(1);
-        });
+    // world.addContactMaterial(groundBoxContactMat);
+    // audioLoader.load('../audio/sound.mp3', function(){
+    //     contactSound.setBuffer(buffer);
+    //     contactSound.setLoop(false);
+    //     contactSound.setVolume(1);
+    // })
     }
 }
 // adding obj: sphare
@@ -800,7 +805,7 @@ setTimeout(function() {
     renderer.setAnimationLoop(()=>animate(gmesh, gbody, numObjects));
 }, 1000);
 
-},{"three":"ktPTu","three/examples/jsm/Addons.js":"iBAni","dat.gui":"k3xQk","cannon-es":"HCu3b","three/examples/jsm/nodes/Nodes.js":"a6WJh"}],"ktPTu":[function(require,module,exports) {
+},{"three":"ktPTu","three/examples/jsm/Addons.js":"iBAni","dat.gui":"k3xQk","cannon-es":"HCu3b","three/examples/jsm/nodes/Nodes.js":"a6WJh","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./three_mmi":"eGdYR"}],"ktPTu":[function(require,module,exports) {
 /**
  * @license
  * Copyright 2010-2023 Three.js Authors
@@ -31609,37 +31614,7 @@ if (typeof window !== "undefined") {
     else window.__THREE__ = REVISION;
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
-exports.interopDefault = function(a) {
-    return a && a.__esModule ? a : {
-        default: a
-    };
-};
-exports.defineInteropFlag = function(a) {
-    Object.defineProperty(a, "__esModule", {
-        value: true
-    });
-};
-exports.exportAll = function(source, dest) {
-    Object.keys(source).forEach(function(key) {
-        if (key === "default" || key === "__esModule" || Object.prototype.hasOwnProperty.call(dest, key)) return;
-        Object.defineProperty(dest, key, {
-            enumerable: true,
-            get: function() {
-                return source[key];
-            }
-        });
-    });
-    return dest;
-};
-exports.export = function(dest, destName, get) {
-    Object.defineProperty(dest, destName, {
-        enumerable: true,
-        get: get
-    });
-};
-
-},{}],"iBAni":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"iBAni":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "WebGL", ()=>(0, _webGLJsDefault.default));

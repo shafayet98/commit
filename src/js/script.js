@@ -6,6 +6,7 @@ import * as dat from 'dat.gui';
 // import cannon
 import * as CANNON from 'cannon-es';
 import { buffer, func } from 'three/examples/jsm/nodes/Nodes.js';
+import MouseMeshInteraction from './three_mmi';
 
 
 function generateCommitColor(){
@@ -71,6 +72,8 @@ scene.add(dLightHelper);
 const dLightShadowHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
 scene.add(dLightShadowHelper);
 
+// MMI
+const mmi = new MouseMeshInteraction(scene, camera);
 
 function createAxisHelper() {
     // add the axis helper
@@ -157,12 +160,12 @@ function createBoxBody(numObjects) {
 }
 
 
-const listener = new THREE.AudioListener();
-camera.add(listener);
+// const listener = new THREE.AudioListener();
+// camera.add(listener);
 
-const audioLoader = new THREE.AudioLoader();
+// const audioLoader = new THREE.AudioLoader();
 
-const contactSound = new THREE.Audio(listener);
+// const contactSound = new THREE.Audio(listener);
 
 function createContact(numObjects, groundPhysMat) {
     // // contact between box and ground
@@ -171,12 +174,12 @@ function createContact(numObjects, groundPhysMat) {
             friction: 0.2,
             restitution: 1
         })
-        world.addContactMaterial(groundBoxContactMat);
-        audioLoader.load('../audio/sound.mp3', function(){
-            contactSound.setBuffer(buffer);
-            contactSound.setLoop(false);
-            contactSound.setVolume(1);
-        })
+        // world.addContactMaterial(groundBoxContactMat);
+        // audioLoader.load('../audio/sound.mp3', function(){
+        //     contactSound.setBuffer(buffer);
+        //     contactSound.setLoop(false);
+        //     contactSound.setVolume(1);
+        // })
 
         
 
