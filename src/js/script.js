@@ -5,15 +5,26 @@ import { OrbitControls } from 'three/examples/jsm/Addons.js';
 import * as dat from 'dat.gui';
 // import cannon
 import * as CANNON from 'cannon-es';
-// import {result} from './data.js';
-// import commit_count from './data.js';
+import { buffer, func } from 'three/examples/jsm/nodes/Nodes.js';
 
+
+function generateCommitColor(){
+    // color HEX
+    // #0B6A33 
+    // #3AD353
+    // #026D31
+    // #27A641
+    arrayOfColor = ['#0B6A33','#3AD353','#026D31','#27A641']
+    indx = Math.floor(createRandomPosition(0,3));
+    // console.log(arrayOfColor[indx]);
+    return arrayOfColor[indx];
+}
 
 const renderer = new THREE.WebGLRenderer();
 renderer.shadowMap.enabled = true;
 // Setting the canvas size
-renderer.setSize(window.innerWidth, window.innerHeight);
-// renderer.setSize(1500, 500);
+// renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setSize(1500, 500);
 // smooth edges
 renderer.setPixelRatio(window.devicePixelRatio);
 // adding the canvas to html
@@ -40,6 +51,27 @@ const world = new CANNON.World({
     gravity: new CANNON.Vec3(0, -12.81, 0)
 });
 
+// add light
+// const ambientLight = new THREE.AmbientLight(0x333333);
+// scene.add(ambientLight);
+
+const directionalLight = new THREE.DirectionalLight(0xFFFFFF,1);
+scene.add(directionalLight);
+directionalLight.position.set(-30,40,0);
+directionalLight.castShadow = true;
+directionalLight.shadow.camera.bottom = -10;
+directionalLight.shadow.camera.top = 10;
+directionalLight.shadow.camera.left = -10;
+directionalLight.shadow.camera.right = 10;
+
+
+const dLightHelper = new THREE.DirectionalLightHelper(directionalLight);
+scene.add(dLightHelper);
+
+const dLightShadowHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
+scene.add(dLightShadowHelper);
+
+
 function createAxisHelper() {
     // add the axis helper
     const axisHelper = new THREE.AxesHelper(3); // 5 is the length of the axis
@@ -55,12 +87,13 @@ function createGridHelper(){
 function createGroundMesh() {
     // adding object: ground
     const groundGeo = new THREE.BoxGeometry(20, 20, 0.5);
-    const groundMat = new THREE.MeshBasicMaterial({
-        color: 0xffffff,
+    const groundMat = new THREE.MeshStandardMaterial({
+        color: '#031D02',
         side: THREE.DoubleSide,
         wireframe: false
     });
     const groundMesh = new THREE.Mesh(groundGeo, groundMat);
+    groundMesh.receiveShadow = true;
     scene.add(groundMesh);
     return groundMesh;
 }
@@ -88,11 +121,12 @@ function createBoxMesh(numObjects) {
     boxesMesh = [];
     for (let i = 0; i <= numObjects; i++) {
         const boxGeo = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-        const boxMat = new THREE.MeshBasicMaterial({
-            color: 0x00ff00,
+        const boxMat = new THREE.MeshStandardMaterial({
+            color: generateCommitColor(),
             wireframe: false
         });
         const boxMesh = new THREE.Mesh(boxGeo, boxMat);
+        boxMesh.castShadow = true;
         boxesMesh.push(boxMesh);
         scene.add(boxMesh);
     }
@@ -109,7 +143,7 @@ function createBoxBody(numObjects) {
         const boxBody = new CANNON.Body({
             mass: 1,
             shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)),
-            position: new CANNON.Vec3(createRandomPosition(-8, 8), createRandomPosition(1, 10), createRandomPosition(-8, 8)),
+            position: new CANNON.Vec3(createRandomPosition(-8, 8), createRandomPosition(1, 20), createRandomPosition(-8, 8)),
             material: boxPhysMat
         });
         // boxBody.angularVelocity.set(0,10,0);
@@ -123,6 +157,13 @@ function createBoxBody(numObjects) {
 }
 
 
+const listener = new THREE.AudioListener();
+camera.add(listener);
+
+const audioLoader = new THREE.AudioLoader();
+
+const contactSound = new THREE.Audio(listener);
+
 function createContact(numObjects, groundPhysMat) {
     // // contact between box and ground
     for (let i = 0; i <= numObjects; i++) {
@@ -131,11 +172,19 @@ function createContact(numObjects, groundPhysMat) {
             restitution: 1
         })
         world.addContactMaterial(groundBoxContactMat);
+        audioLoader.load('../audio/sound.mp3', function(){
+            contactSound.setBuffer(buffer);
+            contactSound.setLoop(false);
+            contactSound.setVolume(1);
+        })
+
+        
+
     }
 }
 
 
-// adding job: sphare
+// adding obj: sphare
 // const sphereGeo = new THREE.SphereGeometry(1);
 // const sphereMat = new THREE.MeshBasicMaterial({ 
 // 	color: 0xff0000, 
@@ -195,8 +244,8 @@ setTimeout(function () {
     //your code to be executed after 1 second
     let numObjects = localStorage.getItem("objects");
     console.log(numObjects);
-    createAxisHelper();
-    createGridHelper();
+    // createAxisHelper();
+    // createGridHelper();
     const gmesh = createGroundMesh();
     const [gbody, gPhyMat] = createGroundBody(gmesh);
     const bmesh = createBoxMesh(numObjects);
