@@ -67,11 +67,11 @@ directionalLight.shadow.camera.left = -10;
 directionalLight.shadow.camera.right = 10;
 
 
-const dLightHelper = new THREE.DirectionalLightHelper(directionalLight);
-scene.add(dLightHelper);
+// const dLightHelper = new THREE.DirectionalLightHelper(directionalLight);
+// scene.add(dLightHelper);
 
-const dLightShadowHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
-scene.add(dLightShadowHelper);
+// const dLightShadowHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
+// scene.add(dLightShadowHelper);
 
 
 
@@ -235,14 +235,14 @@ function onMouseDown(event, numObjects) {
 }
 //   https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=
 function getCommitMsg(id) {
-    url = "https://api.github.com/repos/tensorflow/swift/commits?per_page=1&page=" + id;
+    url = "https://api.github.com/repos/caged/d3-tip/commits?per_page=1&page=" + id;
     // url = "https://api.github.com/repos/mrdoob/glTF-Sample-Assets/commits?per_page=1&page=" + id;
     axios.get(url)
         .then(function (response) {
             console.log(response.data[0].commit);
             document.getElementById("info").style.display = "block";
-            document.querySelector(".author").innerHTML = response.data[0].commit.committer.name;
-            document.querySelector(".details").innerHTML = response.data[0].commit.message;
+            document.querySelector(".author").innerHTML = "Author: " + response.data[0].commit.committer.name;
+            document.querySelector(".details").innerHTML = "Message: " + response.data[0].commit.message;
             document.querySelector(".date").innerHTML = response.data[0].commit.committer.date;
         })
         .catch(function (error) {
@@ -273,7 +273,7 @@ setTimeout(function () {
     let numObjects = localStorage.getItem("objects");
     document.querySelector(".totalCommits").innerHTML = "Total Commits: " +numObjects;
     console.log(numObjects);
-    createAxisHelper();
+    // createAxisHelper();
     // createGridHelper();
     const gmesh = createGroundMesh();
     const [gbody, gPhyMat] = createGroundBody(gmesh);

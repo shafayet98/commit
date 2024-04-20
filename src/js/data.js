@@ -2,7 +2,7 @@ import axios from "axios";
 
 // url_get = 'https://api.github.com/repos/mrdoob/glTF-Sample-Assets/commits?per_page=1&page=1'
 // url_get = "https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=1"
-url_get = "https://api.github.com/repos/tensorflow/swift/commits?per_page=1&page=1";
+url_get = "https://api.github.com/repos/caged/d3-tip/commits?per_page=1&page=1";
 
 
 
