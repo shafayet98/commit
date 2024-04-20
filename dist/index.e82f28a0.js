@@ -664,6 +664,7 @@ function createGroundMesh() {
         wireframe: false
     });
     const groundMesh = new _three.Mesh(groundGeo, groundMat);
+    groundMesh.name = "ground";
     groundMesh.receiveShadow = true;
     scene.add(groundMesh);
     return groundMesh;
@@ -696,6 +697,7 @@ function createBoxMesh(numObjects) {
             wireframe: false
         });
         const boxMesh = new _three.Mesh(boxGeo, boxMat);
+        boxMesh.userData.originalColor = boxMat.color;
         boxMesh.castShadow = true;
         boxesMesh.push(boxMesh);
         scene.add(boxMesh);
@@ -771,24 +773,41 @@ function createContact(numObjects, groundPhysMat) {
 const timeStep = 1 / 60;
 // RayCasting
 const rayCaster = new _three.Raycaster();
-document.addEventListener("mousedown", onMouseDown);
-function onMouseDown(event) {
+function onPointerMove(event, numObjects, bmesh) {
+    const coords = new _three.Vector2(event.clientX / renderer.domElement.clientWidth * 2 - 1, -(event.clientY / renderer.domElement.clientHeight * 2 - 1));
+    rayCaster.setFromCamera(coords, camera);
+    const intersections = rayCaster.intersectObjects(scene.children, true);
+    // console.log(intersections);
+    if (intersections.length > 0 && intersections[0].object.name !== "ground") {
+        const selectedObject = intersections[0].object;
+        console.log(selectedObject.material.color);
+        const color = new _three.Color(Math.random(), Math.random(), Math.random());
+        if (selectedObject.id != 25 && selectedObject.id < numObjects) selectedObject.material.color = color;
+    // else{
+    //     console.log("Hello");
+    //     selectedObject.material.color.set(bmesh[selectedObject.id].material.originalColor);
+    //     console.log(selectedObject.material.color);
+    //     // bmesh[selectedObject.id].material.color.set(bmesh[selectedObject.id].userData.originalColor);
+    // }
+    } else for(let i = 0; i < numObjects; i++)bmesh[i].material.color.set(bmesh[i].userData.originalColor);
+}
+function onMouseDown(event, numObjects) {
     const coords = new _three.Vector2(event.clientX / renderer.domElement.clientWidth * 2 - 1, -(event.clientY / renderer.domElement.clientHeight * 2 - 1));
     rayCaster.setFromCamera(coords, camera);
     const intersections = rayCaster.intersectObjects(scene.children, true);
     if (intersections.length > 0) {
         const selectedObject = intersections[0].object;
         const color = new _three.Color(Math.random(), Math.random(), Math.random());
-        selectedObject.position.y = 3;
-        console.log(selectedObject.id);
-        getCommitMsg(selectedObject.id);
-    //   selectedObject.material.color = color;
-    //   console.log(`${selectedObject.name} was clicked!`);
+        if (selectedObject.id != 25 || selectedObject.id < numObjects) {
+            console.log(selectedObject.id);
+            getCommitMsg(selectedObject.id);
+        }
     }
 }
 //   https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=
 function getCommitMsg(id) {
-    url = "https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=" + id;
+    // url = "https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=" + id;
+    url = "https://api.github.com/repos/mrdoob/glTF-Sample-Assets/commits?per_page=1&page=" + id;
     axios.get(url).then(function(response) {
         console.log(response.data[0].commit);
     }).catch(function(error) {
@@ -823,6 +842,12 @@ setTimeout(function() {
     const bmesh = createBoxMesh(numObjects);
     const [bbody, bPhyMat] = createBoxBody(numObjects);
     createContact(numObjects, gPhyMat, bPhyMat);
+    document.addEventListener("mousedown", onMouseDown);
+    document.addEventListener("pointermove", (event)=>{
+        onPointerMove(event, numObjects, bmesh);
+    });
+    onMouseDown(numObjects);
+    // onMouseLeave();
     renderer.setAnimationLoop(()=>animate(gmesh, gbody, numObjects));
 }, 1000);
 
