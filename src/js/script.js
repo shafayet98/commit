@@ -6,6 +6,8 @@ import * as dat from 'dat.gui';
 // import cannon
 import * as CANNON from 'cannon-es';
 import { buffer, func } from 'three/examples/jsm/nodes/Nodes.js';
+import * as TWEEN from '@tweenjs/tween.js'
+import gsap from '../../node_modules/gsap/index.js';
 
 
 function generateCommitColor() {
@@ -227,12 +229,10 @@ function onPointerMove(event, numObjects,bmesh) {
         -((event.clientY / renderer.domElement.clientHeight) * 2 - 1),
     );
     rayCaster.setFromCamera(coords, camera);
-
     const intersections = rayCaster.intersectObjects(scene.children, true);
     // console.log(intersections);
     if (intersections.length > 0 && intersections[0].object.name !== 'ground') {
         const selectedObject = intersections[0].object;
-        console.log(selectedObject.material.color);
         // const color = new THREE.Color(Math.random(), Math.random(), Math.random());
         // #0B6A33 
         // #3AD353
@@ -269,6 +269,24 @@ function onMouseDown(event, numObjects) {
         (event.clientX / renderer.domElement.clientWidth) * 2 - 1,
         -((event.clientY / renderer.domElement.clientHeight) * 2 - 1),
     );
+    
+    // gsap
+    gsap.to(camera.position, {
+        duration: 1,
+        x: -10,
+        y: 30,
+        z: 30
+    })
+
+
+    // tween
+    // const tween = new TWEEN.Tween(camera.position) // Create a new tween that modifies 'coords'.
+	// 	.to({x: -10, y: 30, z: 30}, 1000) // Move to (300, 200) in 1 second.
+	// 	.easing(TWEEN.Easing.Linear.None)
+	// 	.start() // Start the tween immediately.
+    // tween.update();
+
+
 
     rayCaster.setFromCamera(coords, camera);
 
@@ -280,7 +298,6 @@ function onMouseDown(event, numObjects) {
             selectedObject.material.color = color;
             selectedObject.material.emissive = color;
             selectedObject.material.emissiveIntensity = 10;
-            console.log(selectedObject.id);
             getCommitMsg(selectedObject.id);
         }
     }
@@ -300,7 +317,6 @@ function getCommitMsg(id) {
 }
 function animate(gmesh, gbody, numObjects) {
     world.step(timeStep);
-
     gmesh.position.copy(gbody.position);
     gmesh.quaternion.copy(gbody.quaternion);
 
@@ -340,9 +356,9 @@ setTimeout(function () {
     document.addEventListener('pointermove', (event) => {
         onPointerMove(event, numObjects, bmesh);
     });
-
     onMouseDown(numObjects);
-    
+
+    // console.log(DOMHighResTimeStamp);
     // onMouseLeave();
     renderer.setAnimationLoop(() => animate(gmesh, gbody, numObjects));
 }, 1000);

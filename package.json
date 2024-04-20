@@ -15,9 +15,11 @@
   },
   "dependencies": {
     "@danielblagy/three-mmi": "^1.0.0",
+    "@tweenjs/tween.js": "^23.1.1",
     "axios": "^1.6.8",
     "cannon-es": "^0.20.0",
     "dat.gui": "^0.7.9",
+    "gsap": "^3.12.5",
     "three": "^0.163.0",
     "threex-domevents": "^1.0.0"
   }
