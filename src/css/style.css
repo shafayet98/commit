@@ -12,6 +12,7 @@ body {
 	display:none;
     background-color: black;
     color: white;
+    width: 250px;
     /* border: 1px solid red; */
     font-family: "Jersey 25", sans-serif;
     font-weight: 400;
@@ -19,17 +20,19 @@ body {
     font-size: 34px;
 }
 
-.intro, .author, .details, .date{
+.totalCommits, .intro, .author, .details, .date{
     margin: 0px;
 }
-
-.author{
+.totalCommits{
     margin-top: 10px;
     font-size: 32px;
 }
-.details{
+.author{
     font-size: 30px;
 }
+.details{
+    font-size: 28px;
+}
 .date{
-    font-size: 24px;
+    font-size: 22px;
 }

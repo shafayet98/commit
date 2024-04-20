@@ -584,32 +584,12 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"kq51T":[function(require,module,exports) {
-// const axios = require('axios');
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _axios = require("axios");
 var _axiosDefault = parcelHelpers.interopDefault(_axios);
-// import axios from "axios";
-//  <https://api.github.com/repositories/297244943/commits?per_page=1&page=114>; rel="last"
-// https://api.github.com/repos/mrdoob/glTF-Sample-Assets/commits?per_page=1&page=1
 // url_get = 'https://api.github.com/repos/mrdoob/glTF-Sample-Assets/commits?per_page=1&page=1'
-url_get = "https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=1";
-// url = "https://random-data-api.com/api/v2/users"
-// var commit_count;
-// axios.get(url_get)
-//   .then(function (response) {
-//     console.log(response.headers.link);
-//     // handle success
-//     // let response_header_link = response.headers.link;
-//     // let link_arr = response_header_link.split(",");
-//     // let take_query_string = link_arr.pop().split("?");
-//     // let take_page_number_info = take_query_string.pop().split(">")[0];
-//     // let last_page = take_page_number_info.split('&').pop();
-//     // commit_count = parseInt(last_page.split("=").pop());
-//     // console.log(commit_count);
-//   })
-//   .catch(function (error) {
-//     console.log(error);
-//   });
+// url_get = "https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=1"
+url_get = "https://api.github.com/repos/tensorflow/swift/commits?per_page=1&page=1";
 function getData() {
     (0, _axiosDefault.default).get(url_get).then(function(response) {
         // handle success
@@ -626,27 +606,6 @@ function getData() {
         console.log(error);
     });
 }
-// function createURLs(pages){
-//   let urls = [];
-//   let baseUrl = 'https://api.github.com/repos/mrdoob/glTF-Sample-Assets/commits?per_page=1&page='
-//   for(let i = 1; i<=pages ; i++){
-//     let url = baseUrl + i.toString();
-//     urls.push(url);
-//   }
-//   getCommits(pages,urls);
-// }
-// function getCommits(pages,urls){
-//   for (let i = 0 ; i<pages ;i++){
-//     axios.get(urls[i])
-//     .then(function(response){
-//       console.log(response);
-//     })
-//     .catch(function (error) {
-//       console.log(error);
-//     });
-//   }
-// }
-// Call the function to fetch data from the API when a.js is loaded
 getData();
 
 },{"axios":"jo6P5","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jo6P5":[function(require,module,exports) {

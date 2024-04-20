@@ -599,11 +599,7 @@ var _indexJsDefault = parcelHelpers.interopDefault(_indexJs);
 var _threeTextSprite = require("@seregpie/three.text-sprite");
 var _threeTextSpriteDefault = parcelHelpers.interopDefault(_threeTextSprite);
 function generateCommitColor() {
-    // color HEX
-    // #0B6A33 
-    // #3AD353
-    // #026D31
-    // #27A641
+    // color HEX: #0B6A33, #3AD353, #026D31, #27A641
     arrayOfColor = [
         "#0B6A33",
         "#3AD353",
@@ -611,7 +607,6 @@ function generateCommitColor() {
         "#27A641"
     ];
     indx = Math.floor(createRandomPosition(0, 3));
-    // console.log(arrayOfColor[indx]);
     return arrayOfColor[indx];
 }
 const renderer = new _three.WebGLRenderer();
@@ -640,8 +635,8 @@ const world = new _cannonEs.World({
     gravity: new _cannonEs.Vec3(0, -12.81, 0)
 });
 // add light
-// const ambientLight = new THREE.AmbientLight(0x333333);
-// scene.add(ambientLight);
+const ambientLight = new _three.AmbientLight(0x333333);
+scene.add(ambientLight);
 const directionalLight = new _three.DirectionalLight(0xFFFFFF, 1);
 scene.add(directionalLight);
 directionalLight.position.set(-30, 40, 0);
@@ -700,7 +695,7 @@ function createBoxMesh(numObjects) {
     // add a box 
     boxesMesh = [];
     for(let i = 0; i <= numObjects; i++){
-        const boxGeo = new _three.BoxGeometry(0.5, 0.5, 0.5);
+        const boxGeo = new _three.BoxGeometry(0.2, 0.2, 0.2);
         const boxMat = new _three.MeshStandardMaterial({
             color: generateCommitColor(),
             wireframe: false
@@ -735,10 +730,6 @@ function createBoxBody(numObjects) {
     console.log(boxBodies);
     return boxBodies, boxesPhyMat;
 }
-// const listener = new THREE.AudioListener();
-// camera.add(listener);
-// const audioLoader = new THREE.AudioLoader();
-// const contactSound = new THREE.Audio(listener);
 function createContact(numObjects, groundPhysMat) {
     // // contact between box and ground
     for(let i = 0; i <= numObjects; i++){
@@ -746,39 +737,8 @@ function createContact(numObjects, groundPhysMat) {
             friction: 0.2,
             restitution: 1
         });
-    // world.addContactMaterial(groundBoxContactMat);
-    // audioLoader.load('../audio/sound.mp3', function(){
-    //     contactSound.setBuffer(buffer);
-    //     contactSound.setLoop(false);
-    //     contactSound.setVolume(1);
-    // })
     }
 }
-// adding obj: sphare
-// const sphereGeo = new THREE.SphereGeometry(1);
-// const sphereMat = new THREE.MeshBasicMaterial({ 
-// 	color: 0xff0000, 
-// 	wireframe: true,
-//  });
-// const sphereMesh = new THREE.Mesh( sphereGeo, sphereMat);
-// scene.add(sphereMesh);
-// sphere
-// const spherePhysMat = new CANNON.Material();
-// const sphereBody = new CANNON.Body({
-//     mass: 1,
-//     shape: new CANNON.Sphere(1),
-//     position: new CANNON.Vec3(0, 40, 0),
-//     material: spherePhysMat
-// });
-// world.addBody(sphereBody);
-// sphereBody.linearDamping = 0.6;
-// // contact between sphere and ground
-// const groundSphereContactMat = new CANNON.ContactMaterial(
-//     groundPhysMat,
-//     spherePhysMat,
-//     {restitution: 1}
-// );
-// world.addContactMaterial(groundSphereContactMat);
 const timeStep = 1 / 60;
 // RayCasting
 const rayCaster = new _three.Raycaster();
@@ -789,32 +749,15 @@ function onPointerMove(event, numObjects, bmesh) {
     // console.log(intersections);
     if (intersections.length > 0 && intersections[0].object.name !== "ground") {
         const selectedObject = intersections[0].object;
-        // const color = new THREE.Color(Math.random(), Math.random(), Math.random());
-        // #0B6A33 
-        // #3AD353
-        // #026D31
-        // #27A641
         const color = new _three.Color("#3AD353");
         if (selectedObject.id != 25 && selectedObject.id < numObjects) {
             selectedObject.material.color = color;
             selectedObject.material.emissive = color;
             selectedObject.material.emissiveIntensity = 1;
-        // emissive: generateCommitColor(),
-        // emissiveIntensity: 10, 
-        // console.log(selectedObject.userData);
-        // console.log(bmesh[selectedObject.id].material.color);
         }
-    // else{
-    //     console.log("Hello");
-    //     selectedObject.material.color.set(bmesh[selectedObject.id].material.originalColor);
-    //     console.log(selectedObject.material.color);
-    //     // bmesh[selectedObject.id].material.color.set(bmesh[selectedObject.id].userData.originalColor);
-    // }
     } else for(let i = 0; i < numObjects; i++){
         bmesh[i].material.color.set(bmesh[i].userData.originalColor);
         bmesh[i].material.emissiveIntensity = 0;
-    // bmesh[i].material.emissive.set(generateCommitColor());
-    // bmesh[i].material.emissiveIntensity = 0;
     }
 }
 function onMouseDown(event, numObjects) {
@@ -826,12 +769,6 @@ function onMouseDown(event, numObjects) {
         y: cameraInitY,
         z: cameraInitZ
     });
-    // tween
-    // const tween = new TWEEN.Tween(camera.position) // Create a new tween that modifies 'coords'.
-    // 	.to({x: -10, y: 30, z: 30}, 1000) // Move to (300, 200) in 1 second.
-    // 	.easing(TWEEN.Easing.Linear.None)
-    // 	.start() // Start the tween immediately.
-    // tween.update();
     rayCaster.setFromCamera(coords, camera);
     const intersections = rayCaster.intersectObjects(scene.children, true);
     if (intersections.length > 0 && intersections[0].object.name !== "ground") {
@@ -841,17 +778,13 @@ function onMouseDown(event, numObjects) {
             selectedObject.material.color = color;
             selectedObject.material.emissive = color;
             selectedObject.material.emissiveIntensity = 10;
-            // document.getElementById("info").style.display = "block";
-            // document.querySelector(".author").innerHTML = "Hello";
-            // document.querySelector(".details").innerHTML = "Hello";
-            // document.querySelector(".date").innerHTML = "Hello";
             getCommitMsg(selectedObject.id);
         }
     }
 }
 //   https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=
 function getCommitMsg(id) {
-    url = "https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=" + id;
+    url = "https://api.github.com/repos/tensorflow/swift/commits?per_page=1&page=" + id;
     // url = "https://api.github.com/repos/mrdoob/glTF-Sample-Assets/commits?per_page=1&page=" + id;
     axios.get(url).then(function(response) {
         console.log(response.data[0].commit);
@@ -871,10 +804,6 @@ function animate(gmesh, gbody, numObjects) {
         boxesMesh[i].position.copy(boxBodies[i].position);
         boxesMesh[i].quaternion.copy(boxBodies[i].quaternion);
     }
-    // boxMesh.position.copy(boxBody.position);
-    // boxMesh.quaternion.copy(boxBody.quaternion);
-    // sphereMesh.position.copy(sphereBody.position);
-    // sphereMesh.quaternion.copy(sphereBody.quaternion);
     renderer.render(scene, camera);
 }
 function createRandomPosition(min, max) {
@@ -883,6 +812,7 @@ function createRandomPosition(min, max) {
 setTimeout(function() {
     //your code to be executed after 1 second
     let numObjects = localStorage.getItem("objects");
+    document.querySelector(".totalCommits").innerHTML = "Total Commits: " + numObjects;
     console.log(numObjects);
     createAxisHelper();
     // createGridHelper();
@@ -891,17 +821,16 @@ setTimeout(function() {
     const bmesh = createBoxMesh(numObjects);
     const [bbody, bPhyMat] = createBoxBody(numObjects);
     createContact(numObjects, gPhyMat, bPhyMat);
-    document.addEventListener("mousedown", onMouseDown);
+    document.addEventListener("mousedown", (event)=>{
+        onMouseDown(event, numObjects);
+    });
     document.addEventListener("pointermove", (event)=>{
         onPointerMove(event, numObjects, bmesh);
     });
-    onMouseDown(numObjects);
-    // console.log(DOMHighResTimeStamp);
-    // onMouseLeave();
     renderer.setAnimationLoop(()=>animate(gmesh, gbody, numObjects));
 }, 1000);
 
-},{"three":"ktPTu","three/examples/jsm/Addons.js":"iBAni","dat.gui":"k3xQk","cannon-es":"HCu3b","three/examples/jsm/nodes/Nodes.js":"a6WJh","@tweenjs/tween.js":"7DfAI","../../node_modules/gsap/index.js":"fPSuC","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@seregpie/three.text-sprite":"gw2zG"}],"ktPTu":[function(require,module,exports) {
+},{"three":"ktPTu","three/examples/jsm/Addons.js":"iBAni","dat.gui":"k3xQk","cannon-es":"HCu3b","three/examples/jsm/nodes/Nodes.js":"a6WJh","@tweenjs/tween.js":"7DfAI","../../node_modules/gsap/index.js":"fPSuC","@seregpie/three.text-sprite":"gw2zG","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ktPTu":[function(require,module,exports) {
 /**
  * @license
  * Copyright 2010-2023 Three.js Authors
