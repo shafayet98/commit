@@ -8,7 +8,9 @@ import * as CANNON from 'cannon-es';
 import { buffer, func } from 'three/examples/jsm/nodes/Nodes.js';
 import * as TWEEN from '@tweenjs/tween.js'
 import gsap from '../../node_modules/gsap/index.js';
-
+import TextSprite from '@seregpie/three.text-sprite';
+import { TextGeometry } from 'three/examples/jsm/Addons.js';
+import { FontLoader } from 'three/examples/jsm/Addons.js';
 
 function generateCommitColor() {
     // color HEX
@@ -25,8 +27,8 @@ function generateCommitColor() {
 const renderer = new THREE.WebGLRenderer();
 renderer.shadowMap.enabled = true;
 // Setting the canvas size
-// renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setSize(1500, 500);
+renderer.setSize(window.innerWidth, window.innerHeight);
+// renderer.setSize(1500, 500);
 // smooth edges
 renderer.setPixelRatio(window.devicePixelRatio);
 // adding the canvas to html
@@ -42,7 +44,10 @@ const camera = new THREE.PerspectiveCamera(
     0.1,
     1000
 );
-camera.position.set(-10, 30, 30); // x,y,z = 0,2,5
+const cameraInitX = -10;
+const cameraInitY = 20;
+const cameraInitZ = 20;
+camera.position.set(cameraInitX, cameraInitY, cameraInitZ); // x,y,z = 0,2,5
 
 // orbit control
 const orbit = new OrbitControls(camera, renderer.domElement);
@@ -222,8 +227,8 @@ const timeStep = 1 / 60;
 // RayCasting
 const rayCaster = new THREE.Raycaster();
 
-function onPointerMove(event, numObjects,bmesh) {
-    
+function onPointerMove(event, numObjects, bmesh) {
+
     const coords = new THREE.Vector2(
         (event.clientX / renderer.domElement.clientWidth) * 2 - 1,
         -((event.clientY / renderer.domElement.clientHeight) * 2 - 1),
@@ -254,8 +259,8 @@ function onPointerMove(event, numObjects,bmesh) {
         //     console.log(selectedObject.material.color);
         //     // bmesh[selectedObject.id].material.color.set(bmesh[selectedObject.id].userData.originalColor);
         // }
-    }else{
-        for(let i = 0; i<numObjects ;i++){
+    } else {
+        for (let i = 0; i < numObjects; i++) {
             bmesh[i].material.color.set(bmesh[i].userData.originalColor);
             bmesh[i].material.emissiveIntensity = 0;
             // bmesh[i].material.emissive.set(generateCommitColor());
@@ -269,21 +274,21 @@ function onMouseDown(event, numObjects) {
         (event.clientX / renderer.domElement.clientWidth) * 2 - 1,
         -((event.clientY / renderer.domElement.clientHeight) * 2 - 1),
     );
-    
+
     // gsap
     gsap.to(camera.position, {
         duration: 1,
-        x: -10,
-        y: 30,
-        z: 30
+        x: cameraInitX,
+        y: cameraInitY,
+        z: cameraInitZ
     })
 
 
     // tween
     // const tween = new TWEEN.Tween(camera.position) // Create a new tween that modifies 'coords'.
-	// 	.to({x: -10, y: 30, z: 30}, 1000) // Move to (300, 200) in 1 second.
-	// 	.easing(TWEEN.Easing.Linear.None)
-	// 	.start() // Start the tween immediately.
+    // 	.to({x: -10, y: 30, z: 30}, 1000) // Move to (300, 200) in 1 second.
+    // 	.easing(TWEEN.Easing.Linear.None)
+    // 	.start() // Start the tween immediately.
     // tween.update();
 
 
@@ -294,10 +299,14 @@ function onMouseDown(event, numObjects) {
     if (intersections.length > 0 && intersections[0].object.name !== 'ground') {
         const selectedObject = intersections[0].object;
         const color = new THREE.Color("#3AD353");
-        if(selectedObject.id != 25 || selectedObject.id < numObjects){
+        if (selectedObject.id != 25 || selectedObject.id < numObjects) {
             selectedObject.material.color = color;
             selectedObject.material.emissive = color;
             selectedObject.material.emissiveIntensity = 10;
+            document.getElementById("info").style.display = "block";
+            document.querySelector(".author").innerHTML = "Hello";
+            document.querySelector(".details").innerHTML = "Hello";
+            document.querySelector(".date").innerHTML = "Hello";
             getCommitMsg(selectedObject.id);
         }
     }
@@ -305,11 +314,13 @@ function onMouseDown(event, numObjects) {
 //   https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=
 
 function getCommitMsg(id) {
-    // url = "https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=" + id;
-    url = "https://api.github.com/repos/mrdoob/glTF-Sample-Assets/commits?per_page=1&page=" + id;
+    url = "https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=" + id;
+    // url = "https://api.github.com/repos/mrdoob/glTF-Sample-Assets/commits?per_page=1&page=" + id;
     axios.get(url)
         .then(function (response) {
             console.log(response.data[0].commit);
+            
+
         })
         .catch(function (error) {
             console.log(error);
@@ -345,7 +356,7 @@ setTimeout(function () {
     //your code to be executed after 1 second
     let numObjects = localStorage.getItem("objects");
     console.log(numObjects);
-    // createAxisHelper();
+    createAxisHelper();
     // createGridHelper();
     const gmesh = createGroundMesh();
     const [gbody, gPhyMat] = createGroundBody(gmesh);

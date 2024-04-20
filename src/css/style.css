@@ -1,0 +1,31 @@
+#info {
+	position: absolute;
+	top: 40px;
+    left: 100px;
+	width: 100%;
+	text-align: left;
+	z-index: 100;
+	display:none;
+    background-color: black;
+    color: white;
+    border: 1px solid red;
+    font-family: "Jersey 25", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 34px;
+}
+
+.intro, .author, .details, .date{
+    margin: 0px;
+}
+
+.author{
+    margin-top: 10px;
+    font-size: 32px;
+}
+.details{
+    font-size: 30px;
+}
+.date{
+    font-size: 24px;
+}

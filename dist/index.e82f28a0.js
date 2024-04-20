@@ -596,6 +596,8 @@ var _nodesJs = require("three/examples/jsm/nodes/Nodes.js");
 var _tweenJs = require("@tweenjs/tween.js");
 var _indexJs = require("../../node_modules/gsap/index.js");
 var _indexJsDefault = parcelHelpers.interopDefault(_indexJs);
+var _threeTextSprite = require("@seregpie/three.text-sprite");
+var _threeTextSpriteDefault = parcelHelpers.interopDefault(_threeTextSprite);
 function generateCommitColor() {
     // color HEX
     // #0B6A33 
@@ -615,8 +617,8 @@ function generateCommitColor() {
 const renderer = new _three.WebGLRenderer();
 renderer.shadowMap.enabled = true;
 // Setting the canvas size
-// renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setSize(1500, 500);
+renderer.setSize(window.innerWidth, window.innerHeight);
+// renderer.setSize(1500, 500);
 // smooth edges
 renderer.setPixelRatio(window.devicePixelRatio);
 // adding the canvas to html
@@ -626,7 +628,10 @@ const scene = new _three.Scene();
 // create the camera
 // Camera = angel, aspect ratio, near and far
 const camera = new _three.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(-10, 30, 30); // x,y,z = 0,2,5
+const cameraInitX = -10;
+const cameraInitY = 20;
+const cameraInitZ = 20;
+camera.position.set(cameraInitX, cameraInitY, cameraInitZ); // x,y,z = 0,2,5
 // orbit control
 const orbit = new (0, _addonsJs.OrbitControls)(camera, renderer.domElement);
 orbit.update();
@@ -817,9 +822,9 @@ function onMouseDown(event, numObjects) {
     // gsap
     (0, _indexJsDefault.default).to(camera.position, {
         duration: 1,
-        x: -10,
-        y: 30,
-        z: 30
+        x: cameraInitX,
+        y: cameraInitY,
+        z: cameraInitZ
     });
     // tween
     // const tween = new TWEEN.Tween(camera.position) // Create a new tween that modifies 'coords'.
@@ -836,14 +841,18 @@ function onMouseDown(event, numObjects) {
             selectedObject.material.color = color;
             selectedObject.material.emissive = color;
             selectedObject.material.emissiveIntensity = 10;
+            document.getElementById("info").style.display = "block";
+            document.querySelector(".author").innerHTML = "Hello";
+            document.querySelector(".details").innerHTML = "Hello";
+            document.querySelector(".date").innerHTML = "Hello";
             getCommitMsg(selectedObject.id);
         }
     }
 }
 //   https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=
 function getCommitMsg(id) {
-    // url = "https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=" + id;
-    url = "https://api.github.com/repos/mrdoob/glTF-Sample-Assets/commits?per_page=1&page=" + id;
+    url = "https://api.github.com/repos/shafayet98/collab/commits?per_page=1&page=" + id;
+    // url = "https://api.github.com/repos/mrdoob/glTF-Sample-Assets/commits?per_page=1&page=" + id;
     axios.get(url).then(function(response) {
         console.log(response.data[0].commit);
     }).catch(function(error) {
@@ -871,7 +880,7 @@ setTimeout(function() {
     //your code to be executed after 1 second
     let numObjects = localStorage.getItem("objects");
     console.log(numObjects);
-    // createAxisHelper();
+    createAxisHelper();
     // createGridHelper();
     const gmesh = createGroundMesh();
     const [gbody, gPhyMat] = createGroundBody(gmesh);
@@ -888,7 +897,7 @@ setTimeout(function() {
     renderer.setAnimationLoop(()=>animate(gmesh, gbody, numObjects));
 }, 1000);
 
-},{"three":"ktPTu","three/examples/jsm/Addons.js":"iBAni","dat.gui":"k3xQk","cannon-es":"HCu3b","three/examples/jsm/nodes/Nodes.js":"a6WJh","@tweenjs/tween.js":"7DfAI","../../node_modules/gsap/index.js":"fPSuC","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ktPTu":[function(require,module,exports) {
+},{"three":"ktPTu","three/examples/jsm/Addons.js":"iBAni","dat.gui":"k3xQk","cannon-es":"HCu3b","three/examples/jsm/nodes/Nodes.js":"a6WJh","@tweenjs/tween.js":"7DfAI","../../node_modules/gsap/index.js":"fPSuC","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@seregpie/three.text-sprite":"gw2zG"}],"ktPTu":[function(require,module,exports) {
 /**
  * @license
  * Copyright 2010-2023 Three.js Authors
@@ -63943,6 +63952,217 @@ var CSSPlugin = {
 });
 (0, _gsapCoreJs.gsap).registerPlugin(CSSPlugin);
 
-},{"./gsap-core.js":"05eeC","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["2L15i","dV6cC"], "dV6cC", "parcelRequirecf19")
+},{"./gsap-core.js":"05eeC","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gw2zG":[function(require,module,exports) {
+!function(e, t) {
+    module.exports = t(require("770cc852cc577f66"), require("a99c126983d4c25c"));
+}(this, function(e, t) {
+    "use strict";
+    function i(e) {
+        return e && "object" == typeof e && "default" in e ? e : {
+            default: e
+        };
+    }
+    var r = i(t);
+    let o = class extends e.Sprite {
+        constructor({ fontSize: t = 1, ...i } = {}, o = new e.SpriteMaterial({
+            depthWrite: !1
+        })){
+            super(o);
+            let a = new r.default({
+                fontSize: t,
+                ...i
+            });
+            this.material.map = a;
+        }
+        onBeforeRender(e, t, i) {
+            let { material: r } = this, { map: o } = r;
+            if (o.checkFontFace()) {
+                let { scale: t } = this, { height: r, width: a } = o;
+                a && r ? (t.setX(a).setY(r), o.setOptimalPixelRatio(this, e, i), o.redraw()) : t.setScalar(1);
+            } else o.loadFontFace();
+        }
+        dispose() {
+            let { material: e } = this, { map: t } = e;
+            t.dispose(), e.dispose();
+        }
+    };
+    return [
+        "alignment",
+        "backgroundColor",
+        "color",
+        "fontFamily",
+        "fontSize",
+        "fontStyle",
+        "fontVariant",
+        "fontWeight",
+        "lineGap",
+        "padding",
+        "strokeColor",
+        "strokeWidth",
+        "text"
+    ].forEach((e)=>{
+        Object.defineProperty(o.prototype, e, {
+            get () {
+                return this.material.map[e];
+            },
+            set (t) {
+                this.material.map[e] = t;
+            }
+        });
+    }), o.prototype.isTextSprite = !0, o;
+});
+
+},{"770cc852cc577f66":"ktPTu","a99c126983d4c25c":"95Up9"}],"95Up9":[function(require,module,exports) {
+!function(t, e) {
+    module.exports = e(require("a226cfea602a4908"));
+}(this, function(t) {
+    "use strict";
+    let e = class extends t.Texture {
+        constructor(){
+            super(document.createElement("canvas"));
+            let e = null, i = ()=>e || (e = this.createDrawable()), n = ()=>i().width, o = ()=>i().height, r = !0, l = 1, a = ()=>t.MathUtils.ceilPowerOfTwo(n() * l), s = ()=>t.MathUtils.ceilPowerOfTwo(o() * l), h = (t)=>{
+                if (l !== t) {
+                    let e = a(), i = s();
+                    l = t;
+                    let n = a(), o = s();
+                    n === e && o === i || (r = !0);
+                }
+            }, c = (()=>{
+                let e = new t.Vector3, i = new t.Vector2, r = new t.Vector3, l = new t.Vector3, a = new t.Vector2;
+                return (s, h, c)=>{
+                    if (a.set(n(), o()), a.x && a.y) {
+                        s.getWorldPosition(r), c.getWorldPosition(e);
+                        let n = r.distanceTo(e);
+                        if (c.isPerspectiveCamera && (n *= 2 * Math.tan(t.MathUtils.degToRad(c.fov) / 2)), (c.isPerspectiveCamera || c.isOrthographicCamera) && (n /= c.zoom), n) {
+                            var f, d;
+                            s.getWorldScale(l);
+                            let t = null !== (f = null === (d = h.capabilities) || void 0 === d ? void 0 : d.maxTextureSize) && void 0 !== f ? f : 1 / 0;
+                            return h.getDrawingBufferSize(i), Math.min(Math.max(l.x / n * (i.x / a.x), l.y / n * (i.y / a.y)), t / a.x, t / a.y);
+                        }
+                    }
+                    return 0;
+                };
+            })();
+            Object.defineProperties(this, {
+                width: {
+                    get: n
+                },
+                height: {
+                    get: o
+                },
+                pixelRatio: {
+                    get: ()=>l,
+                    set: h
+                },
+                needsRedraw: {
+                    set (t) {
+                        t && (r = !0, e = null);
+                    }
+                }
+            }), Object.assign(this, {
+                redraw () {
+                    if (r) {
+                        let t = this.image, e = t.getContext("2d");
+                        e.clearRect(0, 0, t.width, t.height), t.width = a(), t.height = s(), t.width && t.height ? (e.save(), e.scale(t.width / n(), t.height / o()), ((...t)=>{
+                            i().draw(...t);
+                        })(e), e.restore()) : t.width = t.height = 1, r = !1, this.needsUpdate = !0;
+                    }
+                },
+                setOptimalPixelRatio (...t) {
+                    h(c(...t));
+                }
+            });
+        }
+    };
+    e.prototype.isDynamicTexture = !0;
+    let i = class extends e {
+        constructor({ alignment: t = "center", backgroundColor: e = "rgba(0,0,0,0)", color: i = "#fff", fontFamily: n = "sans-serif", fontSize: o = 16, fontStyle: r = "normal", fontVariant: l = "normal", fontWeight: a = "normal", lineGap: s = 1 / 4, padding: h = .5, strokeColor: c = "#fff", strokeWidth: f = 0, text: d = "" } = {}){
+            super(), Object.entries({
+                alignment: t,
+                backgroundColor: e,
+                color: i,
+                fontFamily: n,
+                fontSize: o,
+                fontStyle: r,
+                fontVariant: l,
+                fontWeight: a,
+                lineGap: s,
+                padding: h,
+                strokeColor: c,
+                strokeWidth: f,
+                text: d
+            }).forEach(([t, e])=>{
+                Object.defineProperty(this, t, {
+                    get: ()=>e,
+                    set (t) {
+                        e !== t && (e = t, this.needsRedraw = !0);
+                    }
+                });
+            });
+        }
+        get lines() {
+            let { text: t } = this;
+            return t ? t.split("\n") : [];
+        }
+        get font() {
+            return function(t, e, i, n, o) {
+                let r = document.createElement("span");
+                return r.style.font = "1px serif", r.style.fontFamily = t, r.style.fontSize = "".concat(e, "px"), r.style.fontStyle = i, r.style.fontVariant = n, r.style.fontWeight = o, r.style.font;
+            }(this.fontFamily, this.fontSize, this.fontStyle, this.fontVariant, this.fontWeight);
+        }
+        checkFontFace() {
+            try {
+                let { font: t } = this;
+                return document.fonts.check(t);
+            } catch  {}
+            return !0;
+        }
+        async loadFontFace() {
+            try {
+                let { font: t } = this;
+                await document.fonts.load(t);
+            } catch  {}
+        }
+        createDrawable() {
+            let { alignment: t, backgroundColor: e, color: i, font: n, fontSize: o, lineGap: r, lines: l, padding: a, strokeColor: s, strokeWidth: h } = this;
+            a *= o, r *= o, h *= o;
+            let c = l.length, f = o + r, d = c ? (()=>{
+                let t = document.createElement("canvas").getContext("2d");
+                return t.font = n, Math.max(...l.map((e)=>t.measureText(e).width));
+            })() : 0, g = a + h / 2, u = d + 2 * g;
+            return {
+                width: u,
+                height: (c ? o + f * (c - 1) : 0) + 2 * g,
+                draw (r) {
+                    let a;
+                    r.fillStyle = e, r.fillRect(0, 0, r.canvas.width, r.canvas.height);
+                    let c = g + o / 2;
+                    Object.assign(r, {
+                        fillStyle: i,
+                        font: n,
+                        lineWidth: h,
+                        miterLimit: 1,
+                        strokeStyle: s,
+                        textAlign: (()=>{
+                            switch(t){
+                                case "left":
+                                    return a = g, "left";
+                                case "right":
+                                    return a = u - g, "right";
+                            }
+                            return a = u / 2, "center";
+                        })(),
+                        textBaseline: "middle"
+                    }), l.forEach((t)=>{
+                        r.fillText(t, a, c), h && r.strokeText(t, a, c), c += f;
+                    });
+                }
+            };
+        }
+    };
+    return i.prototype.isTextTexture = !0, i;
+});
+
+},{"a226cfea602a4908":"ktPTu"}]},["2L15i","dV6cC"], "dV6cC", "parcelRequirecf19")
 
 //# sourceMappingURL=index.e82f28a0.js.map

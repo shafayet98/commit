@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@danielblagy/three-mmi": "^1.0.0",
+    "@seregpie/three.text-sprite": "^3.2.0",
     "@tweenjs/tween.js": "^23.1.1",
     "axios": "^1.6.8",
     "cannon-es": "^0.20.0",
