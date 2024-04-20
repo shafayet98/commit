@@ -303,10 +303,10 @@ function onMouseDown(event, numObjects) {
             selectedObject.material.color = color;
             selectedObject.material.emissive = color;
             selectedObject.material.emissiveIntensity = 10;
-            document.getElementById("info").style.display = "block";
-            document.querySelector(".author").innerHTML = "Hello";
-            document.querySelector(".details").innerHTML = "Hello";
-            document.querySelector(".date").innerHTML = "Hello";
+            // document.getElementById("info").style.display = "block";
+            // document.querySelector(".author").innerHTML = "Hello";
+            // document.querySelector(".details").innerHTML = "Hello";
+            // document.querySelector(".date").innerHTML = "Hello";
             getCommitMsg(selectedObject.id);
         }
     }
@@ -319,8 +319,10 @@ function getCommitMsg(id) {
     axios.get(url)
         .then(function (response) {
             console.log(response.data[0].commit);
-            
-
+            document.getElementById("info").style.display = "block";
+            document.querySelector(".author").innerHTML = response.data[0].commit.committer.name;
+            document.querySelector(".details").innerHTML = response.data[0].commit.message;
+            document.querySelector(".date").innerHTML = response.data[0].commit.committer.date;
         })
         .catch(function (error) {
             console.log(error);
