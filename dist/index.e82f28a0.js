@@ -781,24 +781,45 @@ function onPointerMove(event, numObjects, bmesh) {
     if (intersections.length > 0 && intersections[0].object.name !== "ground") {
         const selectedObject = intersections[0].object;
         console.log(selectedObject.material.color);
-        const color = new _three.Color(Math.random(), Math.random(), Math.random());
-        if (selectedObject.id != 25 && selectedObject.id < numObjects) selectedObject.material.color = color;
+        // const color = new THREE.Color(Math.random(), Math.random(), Math.random());
+        // #0B6A33 
+        // #3AD353
+        // #026D31
+        // #27A641
+        const color = new _three.Color("#3AD353");
+        if (selectedObject.id != 25 && selectedObject.id < numObjects) {
+            selectedObject.material.color = color;
+            selectedObject.material.emissive = color;
+            selectedObject.material.emissiveIntensity = 1;
+        // emissive: generateCommitColor(),
+        // emissiveIntensity: 10, 
+        // console.log(selectedObject.userData);
+        // console.log(bmesh[selectedObject.id].material.color);
+        }
     // else{
     //     console.log("Hello");
     //     selectedObject.material.color.set(bmesh[selectedObject.id].material.originalColor);
     //     console.log(selectedObject.material.color);
     //     // bmesh[selectedObject.id].material.color.set(bmesh[selectedObject.id].userData.originalColor);
     // }
-    } else for(let i = 0; i < numObjects; i++)bmesh[i].material.color.set(bmesh[i].userData.originalColor);
+    } else for(let i = 0; i < numObjects; i++){
+        bmesh[i].material.color.set(bmesh[i].userData.originalColor);
+        bmesh[i].material.emissiveIntensity = 0;
+    // bmesh[i].material.emissive.set(generateCommitColor());
+    // bmesh[i].material.emissiveIntensity = 0;
+    }
 }
 function onMouseDown(event, numObjects) {
     const coords = new _three.Vector2(event.clientX / renderer.domElement.clientWidth * 2 - 1, -(event.clientY / renderer.domElement.clientHeight * 2 - 1));
     rayCaster.setFromCamera(coords, camera);
     const intersections = rayCaster.intersectObjects(scene.children, true);
-    if (intersections.length > 0) {
+    if (intersections.length > 0 && intersections[0].object.name !== "ground") {
         const selectedObject = intersections[0].object;
-        const color = new _three.Color(Math.random(), Math.random(), Math.random());
+        const color = new _three.Color("#3AD353");
         if (selectedObject.id != 25 || selectedObject.id < numObjects) {
+            selectedObject.material.color = color;
+            selectedObject.material.emissive = color;
+            selectedObject.material.emissiveIntensity = 10;
             console.log(selectedObject.id);
             getCommitMsg(selectedObject.id);
         }
