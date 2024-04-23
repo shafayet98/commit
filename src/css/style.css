@@ -4,7 +4,7 @@ body {
 
 .about{
     position: absolute;
-    font-size: 28px;
+    font-size: 24px;
     z-index: 100;
     display: block;
     background-color: black;
