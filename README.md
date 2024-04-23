@@ -16,4 +16,4 @@ https://github.com/shafayet98/commit/assets/35225819/1d1ca2f1-15ae-4771-9a1f-5c3
 
 
 
-In the 3d-space each cube represent a github commit and by clicking on each cube: author name, commit message and commit date can will be shown.
+In the 3d-space each cube represent a github commit and by clicking on each cube: author name, commit message and commit date will be shown.
